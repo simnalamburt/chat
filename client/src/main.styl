@@ -10,6 +10,10 @@ input.field
   border: none
   background: #f5f5f5
 
+// No underlink under link
+a:link, a:visited
+  text-decoration: none
+
 #chat
   position: absolute
   left: 10px
@@ -31,6 +35,12 @@ input.field
       margin: 0
       padding: 3px
       list-style-type: none
+      cursor: pointer
+
+      > li:hover { background: #FCFCFC }
+      > li#current
+        font-weight: 600
+        color: #750000
 
   > #buffer
     flex-grow: 1

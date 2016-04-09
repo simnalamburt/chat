@@ -13,14 +13,14 @@ type State = {
   current_channel: string
 };
 const init: State = {
-  channels: { '#general': [] },
+  channels: { '#general': [], '#random': [], '#notice': [] },
   current_channel: '#general'
 };
 
 type Action = {
-  type: 'SubmitMsg'|'ReceiveMsg',
+  type: 'SubmitMsg'|'ReceiveMsg'|'ChangeChannel',
   channel: string,
-  message: string
+  message?: string // Only used with 'SubmitMsg'|'ReceiveMsg'
 };
 type Dispatch = (action: Action) => Action;
 
@@ -29,10 +29,16 @@ const reducer = (state: State = init, action: Action): State => {
   case 'SubmitMsg':
     return state;
   case 'ReceiveMsg':
+    // Validate action
+    const msg = action.message;
+    if (msg == null) { return state; }
+
     const newstate = Object.assign({}, state);
     const channel = newstate.channels[action.channel];
-    channel.push(action.message);
+    channel.push(msg);
     return newstate;
+  case 'ChangeChannel':
+    return { channels: state.channels, current_channel: action.channel };
   default:
     return state;
   }
@@ -55,9 +61,10 @@ const server = store => next => action => {
 type Props = {
   state: State,
   submit: (channel: string, message: string) => Action,
+  changeChannel: (channel: string) => Action,
 };
 
-const View = ({ state, submit }: Props) => {
+const View = ({ state, submit, changeChannel }: Props) => {
   let field_channel, lines, field;
 
   const newMessage = e => {
@@ -79,7 +86,10 @@ const View = ({ state, submit }: Props) => {
         <input className='field' placeholder='새 채널' ref={n=>field_channel=n}/>
       </form>
       <ul>
-        { Object.keys(state.channels).map(ch => <li>{ch}</li>) }
+        { Object.keys(state.channels).map(ch => (
+          <li id={ch === state.current_channel ? 'current' : null}
+            onClick={_ => changeChannel(ch)}>{ch}</li>
+        )) }
       </ul>
     </div>
     <div id='buffer'>
@@ -100,6 +110,7 @@ type DispatchProps = $Diff<Props, StateProps>;
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
   submit: (channel, message) => dispatch({ type: 'SubmitMsg', channel, message }),
+  changeChannel: channel => dispatch({ type: 'ChangeChannel', channel }),
 });
 const App = connect(mapState, mapDispatch)(View);
 
