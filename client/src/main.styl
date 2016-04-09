@@ -37,7 +37,7 @@ a:link, a:visited
       list-style-type: none
       cursor: pointer
 
-      > li:hover { background: #FCFCFC }
+      > li:hover { background: #F0F0F0 }
       > li#current
         font-weight: 600
         color: #750000
@@ -53,3 +53,15 @@ a:link, a:visited
       padding: 3px
       list-style-type: none
       overflow-y: scroll
+
+      > li
+        display: flex
+
+        > .nick
+          color: gray
+          font-size: 0.8em
+          margin-right: 10px
+        > .content { flex-grow: 1 }
+
+        &:hover { background: #F0F0F0 }
+        &:not(:hover) .control { visibility: hidden }

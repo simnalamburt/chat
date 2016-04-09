@@ -5,6 +5,7 @@ import { createStore, compose, applyMiddleware } from 'redux'
 import { Provider, connect } from 'react-redux'
 
 import 'normalize.css/normalize.css'
+import 'font-awesome/css/font-awesome.css'
 import './main.styl'
 
 // Accept permalink
@@ -112,7 +113,13 @@ const View = ({ state, submit, createChannel, changeChannel }: Props) => {
     <div id='buffer'>
       <ul ref={n=>lines=n}>
         { state.channels[state.current_channel].map((line, idx) => (
-          <li key={idx}>{line}</li>
+          <li key={idx}>
+            <span className='nick'>오리너구리</span>
+            <span className='content'>{line}</span>
+            <span className='control'>
+              <i className='fa fa-pencil'/>
+            </span>
+          </li>
         )) }
       </ul>
       <form onSubmit={onSubmit}>
