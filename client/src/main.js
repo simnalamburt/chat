@@ -85,8 +85,33 @@ type Props = {
   changeChannel: (channel: string) => Action,
 };
 
+const Lines = (() => {
+  let lines;
+  return React.createClass({
+    componentDidUpdate(params) {
+      // TODO: 남이 메세지를 보냈을때도 스크롤이 확확 올라가버리면 곤란함
+      lines.scrollTop = lines.scrollHeight - lines.clientHeight;
+    },
+    render() {
+      return <ul ref={n => lines = n}>
+        { this.props.messages.map(({ id, text }: Message) => (
+          <li key={id}>
+            <span className='nick'>오리너구리</span>
+            <span className='content'>{text}</span>
+            <span className='control'>
+              <i className='fa fa-pencil'/>
+              &nbsp;
+              <i className='fa fa-trash-o'/>
+            </span>
+          </li>
+        )) }
+      </ul>;
+    }
+  });
+})();
+
 const View = ({ state, submit, createChannel, changeChannel }: Props) => {
-  let field_channel, lines, field;
+  let field_channel, field;
 
   const onSubmit = e => {
     e.preventDefault();
@@ -94,7 +119,6 @@ const View = ({ state, submit, createChannel, changeChannel }: Props) => {
 
     submit(state.current_channel, field.value);
     field.value = '';
-    lines.scrollTop = lines.scrollHeight - lines.clientHeight; // TODO: Fix
   };
 
   const onCreateChannel = e => {
@@ -120,19 +144,7 @@ const View = ({ state, submit, createChannel, changeChannel }: Props) => {
       </ul>
     </div>
     <div id='buffer'>
-      <ul ref={n=>lines=n}>
-        { state.channels[state.current_channel].map(({ id, text }: Message) => (
-          <li key={id}>
-            <span className='nick'>오리너구리</span>
-            <span className='content'>{text}</span>
-            <span className='control'>
-              <i className='fa fa-pencil'/>
-              &nbsp;
-              <i className='fa fa-trash-o'/>
-            </span>
-          </li>
-        )) }
-      </ul>
+      <Lines messages={state.channels[state.current_channel]}/>
       <form onSubmit={onSubmit}>
         <input className='field' placeholder='친구들과 이야기하세요!' ref={n=>field=n}/>
       </form>
