@@ -7,14 +7,24 @@ import { Provider, connect } from 'react-redux'
 import 'normalize.css/normalize.css'
 import './main.styl'
 
+// Accept permalink
+const hash = location.hash.slice(1);
+const init_ch = hash ? hash : 'general';
+const default_chs = {
+  'general': [],
+  'random': [],
+  'notice': [],
+};
+if (init_ch && !(init_ch in default_chs)) { default_chs[init_ch] = []; }
+
 // States
 type State = {
   channels: { [name: string]: Array<string> },
   current_channel: string
 };
 const init: State = {
-  channels: { 'general': [], 'random': [], 'notice': [] },
-  current_channel: 'general'
+  channels: default_chs,
+  current_channel: init_ch
 };
 
 type Action = {
@@ -126,6 +136,11 @@ socket.onmessage = event => {
 
   store.dispatch({ type: 'ReceiveMsg', channel, message });
 }
+
+// Generate permalink
+store.subscribe(() => {
+  location.hash = store.getState().current_channel;
+});
 
 
 // Entry Point
