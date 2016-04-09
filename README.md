@@ -2,7 +2,9 @@ TODO
 ========
 
 ```
-npm i
+# Building client-side codes
+cd client
+npm install
 
-npm t # Static type checking (flow)
+npm test  # Static type checking (flow)
 ```
