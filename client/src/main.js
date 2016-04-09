@@ -32,16 +32,15 @@ const init: State = {
 };
 
 type Action = {
-  type: 'SubmitMsg'|'ReceiveMsg'|'CreateChannel'|'ChangeChannel',
+  type: 'CreateMsg'|'ReceiveMsg'|'CreateChannel'|'ChangeChannel',
   channel: string,
-  message?: Message // Only used with 'SubmitMsg'|'ReceiveMsg'
+  message?: Message // Only used with 'CreateMsg'|'ReceiveMsg'
 };
 type Dispatch = (action: Action) => Action;
 
 const reducer = (state: State = init, action: Action): State => {
   switch (action.type) {
-  case 'SubmitMsg':
-    return state;
+  case 'CreateMsg':
   case 'ReceiveMsg': {
     // Validate action
     const msg = action.message;
@@ -66,13 +65,14 @@ const reducer = (state: State = init, action: Action): State => {
 
 // Communication (1)
 const socket = new WebSocket(`ws://${location.host}/api`);
+
+// 어플리케이션 에서 내부적으로 'CreateMsg' 이벤트가 발생하였을경우, 타입만
+// 'ReceiveMsg' 로 바꾼뒤 그대로 직렬화하여 서버로 전송한다.
 const server = store => next => action => {
-  if (action.type === 'SubmitMsg') {
-    socket.send(JSON.stringify({
-      type: 'SubmitMsg',
-      channel: action.channel,
-      message: action.message
-    }));
+  if (action.type === 'CreateMsg') {
+    const newaction = Object.assign({}, action);
+    newaction.type = 'ReceiveMsg';
+    socket.send(JSON.stringify(newaction));
   }
   return next(action);
 };
@@ -147,7 +147,7 @@ type DispatchProps = $Diff<Props, StateProps>;
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
   submit: (channel, text) => dispatch({
-    type: 'SubmitMsg', channel, message: { id: UUID.create().toString(), text }
+    type: 'CreateMsg', channel, message: { id: UUID.create().toString(), text }
   }),
   createChannel: channel => dispatch({ type: 'CreateChannel', channel }),
   changeChannel: channel => dispatch({ type: 'ChangeChannel', channel }),
@@ -161,10 +161,8 @@ const store = createStore(reducer, compose(
 
 // Communication (2)
 socket.onmessage = event => {
-  const { type, channel, message } = JSON.parse(event.data);
-  if (type !== 'SubmitMsg') { return; }
-
-  store.dispatch({ type: 'ReceiveMsg', channel, message });
+  // 서버로부터 전달받은 action 객체를 그대로 dispatch 한다
+  store.dispatch(JSON.parse(event.data));
 }
 
 // Generate permalink
