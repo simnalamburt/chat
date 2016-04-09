@@ -96,8 +96,12 @@ const View = ({ state, submit, createChannel, changeChannel }: Props) => {
 
   const onCreateChannel = e => {
     e.preventDefault();
-    createChannel(field_channel.value);
+    const ch = field_channel.value;
+    if (!ch) { return; }
     field_channel.value = ''
+
+    createChannel(ch);
+    changeChannel(ch);
   }
 
   return <div id='chat'>
