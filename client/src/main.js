@@ -3,6 +3,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { createStore, compose, applyMiddleware } from 'redux'
 import { Provider, connect } from 'react-redux'
+import UUID from 'uuid-js'
 
 import 'normalize.css/normalize.css'
 import 'font-awesome/css/font-awesome.css'
@@ -18,9 +19,11 @@ const default_chs = {
 };
 if (init_ch && !(init_ch in default_chs)) { default_chs[init_ch] = []; }
 
+type Message = { id: string, text: string };
+
 // States
 type State = {
-  channels: { [name: string]: Array<string> },
+  channels: { [name: string]: Array<Message> },
   current_channel: string
 };
 const init: State = {
@@ -31,7 +34,7 @@ const init: State = {
 type Action = {
   type: 'SubmitMsg'|'ReceiveMsg'|'CreateChannel'|'ChangeChannel',
   channel: string,
-  message?: string // Only used with 'SubmitMsg'|'ReceiveMsg'
+  message?: Message // Only used with 'SubmitMsg'|'ReceiveMsg'
 };
 type Dispatch = (action: Action) => Action;
 
@@ -118,10 +121,10 @@ const View = ({ state, submit, createChannel, changeChannel }: Props) => {
     </div>
     <div id='buffer'>
       <ul ref={n=>lines=n}>
-        { state.channels[state.current_channel].map((line, idx) => (
-          <li key={idx}>
+        { state.channels[state.current_channel].map(({ id, text }: Message) => (
+          <li key={id}>
             <span className='nick'>오리너구리</span>
-            <span className='content'>{line}</span>
+            <span className='content'>{text}</span>
             <span className='control'>
               <i className='fa fa-pencil'/>
               &nbsp;
@@ -143,7 +146,9 @@ type DispatchProps = $Diff<Props, StateProps>;
 
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
-  submit: (channel, message) => dispatch({ type: 'SubmitMsg', channel, message }),
+  submit: (channel, text) => dispatch({
+    type: 'SubmitMsg', channel, message: { id: UUID.create().toString(), text }
+  }),
   createChannel: channel => dispatch({ type: 'CreateChannel', channel }),
   changeChannel: channel => dispatch({ type: 'ChangeChannel', channel }),
 });
