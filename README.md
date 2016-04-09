@@ -15,5 +15,6 @@ npm run build # Build everything
 cd server
 bundle        # Install dependencies
 
-./run
+./run         # Run a server
+              # See http://localhost:4567
 ```
