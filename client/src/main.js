@@ -28,7 +28,7 @@ const init: State = {
 };
 
 type Action = {
-  type: 'SubmitMsg'|'ReceiveMsg'|'ChangeChannel',
+  type: 'SubmitMsg'|'ReceiveMsg'|'CreateChannel'|'ChangeChannel',
   channel: string,
   message?: string // Only used with 'SubmitMsg'|'ReceiveMsg'
 };
@@ -38,7 +38,7 @@ const reducer = (state: State = init, action: Action): State => {
   switch (action.type) {
   case 'SubmitMsg':
     return state;
-  case 'ReceiveMsg':
+  case 'ReceiveMsg': {
     // Validate action
     const msg = action.message;
     if (msg == null) { return state; }
@@ -46,7 +46,13 @@ const reducer = (state: State = init, action: Action): State => {
     const newstate = Object.assign({}, state);
     const channel = newstate.channels[action.channel];
     channel.push(msg);
-    return newstate;
+    return newstate; }
+  case 'CreateChannel': {
+    if (action.channel in state.channels) { return state; }
+
+    const newstate = Object.assign({}, state);
+    newstate.channels[action.channel] = [];
+    return newstate; }
   case 'ChangeChannel':
     return { channels: state.channels, current_channel: action.channel };
   default:
@@ -71,28 +77,29 @@ const server = store => next => action => {
 type Props = {
   state: State,
   submit: (channel: string, message: string) => Action,
+  createChannel: (channel: string) => Action,
   changeChannel: (channel: string) => Action,
 };
 
-const View = ({ state, submit, changeChannel }: Props) => {
+const View = ({ state, submit, createChannel, changeChannel }: Props) => {
   let field_channel, lines, field;
 
-  const newMessage = e => {
+  const onSubmit = e => {
     e.preventDefault();
     submit(state.current_channel, field.value);
     field.value = '';
     lines.scrollTop = lines.scrollHeight - lines.clientHeight; // TODO: Fix
   };
 
-  const newChannel = e => {
+  const onCreateChannel = e => {
     e.preventDefault();
-    // TODO: Create new channel
+    createChannel(field_channel.value);
     field_channel.value = ''
   }
 
   return <div id='chat'>
     <div id='channels'>
-      <form onSubmit={newChannel}>
+      <form onSubmit={onCreateChannel}>
         <input className='field' placeholder='새 채널' ref={n=>field_channel=n}/>
       </form>
       <ul>
@@ -106,7 +113,7 @@ const View = ({ state, submit, changeChannel }: Props) => {
       <ul ref={n=>lines=n}>
         { state.channels[state.current_channel].map(line => <li>{line}</li>) }
       </ul>
-      <form onSubmit={newMessage}>
+      <form onSubmit={onSubmit}>
         <input className='field' placeholder='친구들과 이야기하세요!' ref={n=>field=n}/>
       </form>
     </div>
@@ -120,6 +127,7 @@ type DispatchProps = $Diff<Props, StateProps>;
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
   submit: (channel, message) => dispatch({ type: 'SubmitMsg', channel, message }),
+  createChannel: channel => dispatch({ type: 'CreateChannel', channel }),
   changeChannel: channel => dispatch({ type: 'ChangeChannel', channel }),
 });
 const App = connect(mapState, mapDispatch)(View);
