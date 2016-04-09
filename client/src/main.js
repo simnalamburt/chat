@@ -58,26 +58,36 @@ type Props = {
 };
 
 const View = ({ state, submit }: Props) => {
-  let lines, field;
-  const onSubmit = e => {
+  let field_channel, lines, field;
+
+  const newMessage = e => {
     e.preventDefault();
     submit(state.current_channel, field.value);
     field.value = '';
     lines.scrollTop = lines.scrollHeight - lines.clientHeight; // TODO: Fix
   };
 
-  const channel = state.channels[state.current_channel];
+  const newChannel = e => {
+    e.preventDefault();
+    // TODO: Create new channel
+    field_channel.value = ''
+  }
 
   return <div id='chat'>
-    <ul id='channels'>
-      { Object.keys(state.channels).map(ch => <li>{ch}</li>) }
-    </ul>
+    <div id='channels'>
+      <form onSubmit={newChannel}>
+        <input className='field' placeholder='새 채널' ref={n=>field_channel=n}/>
+      </form>
+      <ul>
+        { Object.keys(state.channels).map(ch => <li>{ch}</li>) }
+      </ul>
+    </div>
     <div id='buffer'>
       <ul ref={n=>lines=n}>
-        { channel.map(line => <li>{line}</li>) }
+        { state.channels[state.current_channel].map(line => <li>{line}</li>) }
       </ul>
-      <form onSubmit={onSubmit}>
-        <input placeholder='친구들과 이야기하세요!' ref={n=>field=n}/>
+      <form onSubmit={newMessage}>
+        <input className='field' placeholder='친구들과 이야기하세요!' ref={n=>field=n}/>
       </form>
     </div>
   </div>;
