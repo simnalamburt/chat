@@ -13,8 +13,8 @@ type State = {
   current_channel: string
 };
 const init: State = {
-  channels: { '#general': [], '#random': [], '#notice': [] },
-  current_channel: '#general'
+  channels: { 'general': [], 'random': [], 'notice': [] },
+  current_channel: 'general'
 };
 
 type Action = {
