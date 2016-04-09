@@ -9,15 +9,18 @@ import './main.styl'
 
 // States
 type State = { lines: Array<string> };
-type Action = { type: 'SubmitMsg', message?: string };
+type Action = { type: 'SubmitMsg'|'ReceiveMsg', message?: string };
 type Dispatch = (action: Action) => Action;
 const init: State = { lines: ['환영합니다! 친구들과 대화를 시작하세요.'] };
 
 const reducer = (state: State = init, action: Action): State => {
   switch (action.type) {
   case 'SubmitMsg':
+    return state;
+  case 'ReceiveMsg':
+    // Validate action
     const msg = action.message;
-    if (msg == null) { return state; } // Validation
+    if (msg == null) { return state; }
 
     const lines = state.lines.slice();
     lines.push(msg);
@@ -28,13 +31,12 @@ const reducer = (state: State = init, action: Action): State => {
   }
 }
 
-// Communication
+// Communication (1)
+const socket = new WebSocket(`ws://${location.host}/api`);
 const server = store => next => action => {
   if (action.type === 'SubmitMsg') {
-    // TODO: Do server job
-    console.log(`Submitting "${action.message}" ...`);
+    socket.send(action.message);
   }
-
   return next(action);
 };
 
@@ -77,6 +79,13 @@ const store = createStore(reducer, compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
 ));
 
+// Communication (2)
+socket.onmessage = event => {
+  store.dispatch({ type: 'ReceiveMsg', message: event.data });
+}
+
+
+// Entry Point
 render(
   <Provider store={store}>
     <App/>

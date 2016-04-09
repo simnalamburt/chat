@@ -1,11 +1,29 @@
 #!/usr/bin/env ruby
 require 'sinatra'
+require 'sinatra-websocket'
+
+set :server, 'thin'
+set :sockets, []
 
 # Alias '/' to '/index.html'
 get '/' do
   send_file File.join(settings.public_folder, 'index.html')
 end
 
-get '/hi' do
-  'Hello, world!'
+get '/api' do
+  request.websocket do |ws|
+    ws.onopen do
+      ws.send('Connected!')
+      settings.sockets << ws
+    end
+
+    ws.onmessage do |msg|
+      EM.next_tick { settings.sockets.each { |s| s.send(msg) } }
+      puts(msg) # Remove
+    end
+
+    ws.onclose do
+      settings.sockets.delete(ws)
+    end
+  end
 end
