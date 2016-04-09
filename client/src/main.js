@@ -11,9 +11,9 @@ import './main.styl'
 
 
 // States
-type Message = { id: string, text: string };
-type Channel = Array<Message>;
-const new_channel = () => [];
+type Message = string;
+type Channel = Map<string, Message>;
+const new_channel = (): Channel => new Map;
 
 type State = {
   channels: { [name: string]: Channel },
@@ -34,7 +34,8 @@ const init: State = (_ => {
 type Action = {
   type: 'CreateMsg'|'ReceiveMsg'|'CreateChannel'|'ChangeChannel',
   channel: string,
-  message?: Message // Only used with 'CreateMsg'|'ReceiveMsg'
+  msg_id?: string,  // Only used with 'CreateMsg'|'ReceiveMsg'
+  msg?: Message,    // Only used with 'CreateMsg'|'ReceiveMsg'
 };
 type Dispatch = (action: Action) => Action;
 
@@ -43,18 +44,18 @@ const reducer = (state: State = init, action: Action): State => {
   case 'CreateMsg':
   case 'ReceiveMsg': {
     // Validate action
-    const msg = action.message;
-    if (msg == null) { return state; }
+    const { msg_id, msg } = action;
+    if (msg_id == null || msg == null) { return state; }
 
     const newstate = Object.assign({}, state);
     const channel = newstate.channels[action.channel];
-    channel.push(msg);
+    channel.set(msg_id, msg);
     return newstate; }
   case 'CreateChannel': {
     if (action.channel in state.channels) { return state; }
 
     const newstate = Object.assign({}, state);
-    newstate.channels[action.channel] = [];
+    newstate.channels[action.channel] = new_channel();
     return newstate; }
   case 'ChangeChannel':
     return { channels: state.channels, current_channel: action.channel };
@@ -80,32 +81,33 @@ const server = store => next => action => {
 // View
 type Props = {
   state: State,
-  submit: (channel: string, message: string) => Action,
+  submit: (channel: string, msg: string) => Action,
   createChannel: (channel: string) => Action,
   changeChannel: (channel: string) => Action,
 };
 
-const Lines = (() => {
-  let lines;
+const ChannelView = (() => {
+  let elem;
   return React.createClass({
     componentDidUpdate(params) {
       // TODO: 남이 메세지를 보냈을때도 스크롤이 확확 올라가버리면 곤란함
-      lines.scrollTop = lines.scrollHeight - lines.clientHeight;
+      elem.scrollTop = elem.scrollHeight - elem.clientHeight;
     },
     render() {
-      return <ul ref={n => lines = n}>
-        { this.props.messages.map(({ id, text }: Message) => (
-          <li key={id}>
-            <span className='nick'>오리너구리</span>
-            <span className='content'>{text}</span>
-            <span className='control'>
-              <i className='fa fa-pencil'/>
-              &nbsp;
-              <i className='fa fa-trash-o'/>
-            </span>
-          </li>
-        )) }
-      </ul>;
+      const lines = [];
+      const channel: Channel = this.props.channel;
+      for (const [id, msg] of channel) {
+        lines.push(<li key={id}>
+          <span className='nick'>오리너구리</span>
+          <span className='content'>{msg}</span>
+          <span className='control'>
+            <i className='fa fa-pencil'/>
+            &nbsp;
+            <i className='fa fa-trash-o'/>
+          </span>
+        </li>);
+      }
+      return <ul ref={n=>elem=n}>{lines}</ul>;
     }
   });
 })();
@@ -144,7 +146,7 @@ const View = ({ state, submit, createChannel, changeChannel }: Props) => {
       </ul>
     </div>
     <div id='buffer'>
-      <Lines messages={state.channels[state.current_channel]}/>
+      <ChannelView channel={state.channels[state.current_channel]}/>
       <form onSubmit={onSubmit}>
         <input className='field' placeholder='친구들과 이야기하세요!' ref={n=>field=n}/>
       </form>
@@ -158,8 +160,9 @@ type DispatchProps = $Diff<Props, StateProps>;
 
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
-  submit: (channel, text) => dispatch({
-    type: 'CreateMsg', channel, message: { id: UUID.create().toString(), text }
+  submit: (channel, msg) => dispatch({
+    type: 'CreateMsg', channel, msg,
+    msg_id: UUID.create().toString(),
   }),
   createChannel: channel => dispatch({ type: 'CreateChannel', channel }),
   changeChannel: channel => dispatch({ type: 'ChangeChannel', channel }),
