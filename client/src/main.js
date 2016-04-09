@@ -9,27 +9,27 @@ import 'normalize.css/normalize.css'
 import 'font-awesome/css/font-awesome.css'
 import './main.styl'
 
-// Accept permalink
-const hash = location.hash.slice(1);
-const init_ch = hash ? hash : 'general';
-const default_chs = {
-  'general': [],
-  'random': [],
-  'notice': [],
-};
-if (init_ch && !(init_ch in default_chs)) { default_chs[init_ch] = []; }
-
-type Message = { id: string, text: string };
 
 // States
+type Message = { id: string, text: string };
+type Channel = Array<Message>;
+const new_channel = () => [];
+
 type State = {
-  channels: { [name: string]: Array<Message> },
+  channels: { [name: string]: Channel },
   current_channel: string
 };
-const init: State = {
-  channels: default_chs,
-  current_channel: init_ch
-};
+const init: State = (_ => {
+  // Accept permalink
+  const names = ['general', 'random', 'notice'];
+  const channels: Object = names.map(k => ({[k]: new_channel()})).reduce((l, r) => Object.assign(l, r))
+
+  let init = location.hash.slice(1);
+  if (!init) { init = 'general'; }
+  if (!(init in channels)) { channels[init] = new_channel(); }
+
+  return { channels, current_channel: init };
+})();
 
 type Action = {
   type: 'CreateMsg'|'ReceiveMsg'|'CreateChannel'|'ChangeChannel',
