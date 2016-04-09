@@ -124,6 +124,8 @@ const View = ({ state, submit, createChannel, changeChannel }: Props) => {
             <span className='content'>{line}</span>
             <span className='control'>
               <i className='fa fa-pencil'/>
+              &nbsp;
+              <i className='fa fa-trash-o'/>
             </span>
           </li>
         )) }
