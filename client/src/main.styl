@@ -1,1 +1,43 @@
+* { box-sizing: border-box }
 
+body
+  background: #EEE
+
+#chat
+  position: absolute
+  left: 10px
+  right: 10px
+  top: 10px
+  bottom: 10px
+
+  background: white
+  display: flex
+
+  > ul#channels
+    width: 100px
+    margin: 0
+    padding: 3px
+    list-style-type: none
+
+    border-width: 0 1px 0 0
+    border-style: solid
+    border-image: linear-gradient(to top, white, #EEE, white) 1 100%;
+
+  > #buffer
+    flex-grow: 1
+    display: flex
+    flex-direction: column
+
+    > ul
+      flex-grow: 1
+      margin: 0
+      padding: 3px
+      list-style-type: none
+      overflow-y: scroll
+
+    > form > input
+      width: 100%
+      padding: 5px
+      outline: none
+      border: none
+      background: #f5f5f5

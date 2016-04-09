@@ -8,24 +8,31 @@ import 'normalize.css/normalize.css'
 import './main.styl'
 
 // States
-type State = { lines: Array<string> };
-type Action = { type: 'SubmitMsg'|'ReceiveMsg', message?: string };
+type State = {
+  channels: { [name: string]: Array<string> },
+  current_channel: string
+};
+const init: State = {
+  channels: { '#general': [] },
+  current_channel: '#general'
+};
+
+type Action = {
+  type: 'SubmitMsg'|'ReceiveMsg',
+  channel: string,
+  message: string
+};
 type Dispatch = (action: Action) => Action;
-const init: State = { lines: ['환영합니다! 친구들과 대화를 시작하세요.'] };
 
 const reducer = (state: State = init, action: Action): State => {
   switch (action.type) {
   case 'SubmitMsg':
     return state;
   case 'ReceiveMsg':
-    // Validate action
-    const msg = action.message;
-    if (msg == null) { return state; }
-
-    const lines = state.lines.slice();
-    lines.push(msg);
-
-    return { lines };
+    const newstate = Object.assign({}, state);
+    const channel = newstate.channels[action.channel];
+    channel.push(action.message);
+    return newstate;
   default:
     return state;
   }
@@ -37,6 +44,7 @@ const server = store => next => action => {
   if (action.type === 'SubmitMsg') {
     socket.send(JSON.stringify({
       type: 'SubmitMsg',
+      channel: action.channel,
       message: action.message
     }));
   }
@@ -46,24 +54,32 @@ const server = store => next => action => {
 // View
 type Props = {
   state: State,
-  submit: (message: string) => Action,
+  submit: (channel: string, message: string) => Action,
 };
 
 const View = ({ state, submit }: Props) => {
-  let field;
+  let lines, field;
   const onSubmit = e => {
     e.preventDefault();
-    submit(field.value);
+    submit(state.current_channel, field.value);
     field.value = '';
+    lines.scrollTop = lines.scrollHeight - lines.clientHeight; // TODO: Fix
   };
 
-  return <div>
-    <div>
-      { state.lines.map(line => <div>{line}</div>) }
+  const channel = state.channels[state.current_channel];
+
+  return <div id='chat'>
+    <ul id='channels'>
+      { Object.keys(state.channels).map(ch => <li>{ch}</li>) }
+    </ul>
+    <div id='buffer'>
+      <ul ref={n=>lines=n}>
+        { channel.map(line => <li>{line}</li>) }
+      </ul>
+      <form onSubmit={onSubmit}>
+        <input placeholder='친구들과 이야기하세요!' ref={n=>field=n}/>
+      </form>
     </div>
-    <form onSubmit={onSubmit}>
-      <input placeholder='친구들과 이야기하세요!' ref={n=>{field=n}}/>
-    </form>
   </div>;
 };
 
@@ -73,7 +89,7 @@ type DispatchProps = $Diff<Props, StateProps>;
 
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
-  submit: message => dispatch({ type: 'SubmitMsg', message }),
+  submit: (channel, message) => dispatch({ type: 'SubmitMsg', channel, message }),
 });
 const App = connect(mapState, mapDispatch)(View);
 
@@ -84,10 +100,10 @@ const store = createStore(reducer, compose(
 
 // Communication (2)
 socket.onmessage = event => {
-  const { type, message } = JSON.parse(event.data);
+  const { type, channel, message } = JSON.parse(event.data);
   if (type !== 'SubmitMsg') { return; }
 
-  store.dispatch({ type: 'ReceiveMsg', message });
+  store.dispatch({ type: 'ReceiveMsg', channel, message });
 }
 
 
