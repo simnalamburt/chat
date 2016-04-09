@@ -87,6 +87,8 @@ const View = ({ state, submit, createChannel, changeChannel }: Props) => {
 
   const onSubmit = e => {
     e.preventDefault();
+    if (!field.value) { return; }
+
     submit(state.current_channel, field.value);
     field.value = '';
     lines.scrollTop = lines.scrollHeight - lines.clientHeight; // TODO: Fix
