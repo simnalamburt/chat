@@ -35,7 +35,10 @@ const reducer = (state: State = init, action: Action): State => {
 const socket = new WebSocket(`ws://${location.host}/api`);
 const server = store => next => action => {
   if (action.type === 'SubmitMsg') {
-    socket.send(action.message);
+    socket.send(JSON.stringify({
+      type: 'SubmitMsg',
+      message: action.message
+    }));
   }
   return next(action);
 };
@@ -81,7 +84,10 @@ const store = createStore(reducer, compose(
 
 // Communication (2)
 socket.onmessage = event => {
-  store.dispatch({ type: 'ReceiveMsg', message: event.data });
+  const { type, message } = JSON.parse(event.data);
+  if (type !== 'SubmitMsg') { return; }
+
+  store.dispatch({ type: 'ReceiveMsg', message });
 }
 
 

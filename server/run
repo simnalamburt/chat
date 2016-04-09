@@ -12,17 +12,12 @@ end
 
 get '/api' do
   request.websocket do |ws|
-    ws.onopen do
-      ws.send('Connected!')
-      settings.sockets << ws
-    end
+    ws.onopen { settings.sockets << ws }
+    ws.onclose { settings.sockets.delete(ws) }
 
+    # Simply echo all inputs given to the server
     ws.onmessage do |msg|
       EM.next_tick { settings.sockets.each { |s| s.send(msg) } }
-    end
-
-    ws.onclose do
-      settings.sockets.delete(ws)
     end
   end
 end
