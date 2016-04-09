@@ -8,25 +8,21 @@ import 'normalize.css/normalize.css'
 import './main.styl'
 
 // States
-type State = { lines: Array<string>, buffer: string };
-type Action = {
-  type: 'TypeMsg'|'SubmitMsg',
-  message?: string, // `type === 'TypeMsg'` 일 경우에만 쓰이는 필드
-};
+type State = { lines: Array<string> };
+type Action = { type: 'SubmitMsg', message?: string };
 type Dispatch = (action: Action) => Action;
-const init: State = { lines: ['환영합니다! 친구들과 대화를 시작하세요.'], buffer: '' };
+const init: State = { lines: ['환영합니다! 친구들과 대화를 시작하세요.'] };
 
 const reducer = (state: State = init, action: Action): State => {
   switch (action.type) {
-  case 'TypeMsg':
-    if (action.message == null) { return state; } // Validation
-
-    return { lines: state.lines, buffer: action.message };
   case 'SubmitMsg':
-    const lines = state.lines.slice();
-    lines.push(state.buffer);
+    const msg = action.message;
+    if (msg == null) { return state; } // Validation
 
-    return { lines, buffer: '' };
+    const lines = state.lines.slice();
+    lines.push(msg);
+
+    return { lines };
   default:
     return state;
   }
@@ -35,17 +31,15 @@ const reducer = (state: State = init, action: Action): State => {
 // View
 type Props = {
   state: State,
-  type: (message: string) => Action,
-  submit: () => Action,
+  submit: (message: string) => Action,
 };
 
-const View = ({ state, type, submit }: Props) => {
+const View = ({ state, submit }: Props) => {
   let field;
-
-  const onChange = e => type(field.value);
   const onSubmit = e => {
     e.preventDefault();
-    submit();
+    submit(field.value);
+    field.value = '';
   };
 
   return <div>
@@ -53,8 +47,7 @@ const View = ({ state, type, submit }: Props) => {
       { state.lines.map(line => <div>{line}</div>) }
     </div>
     <form onSubmit={onSubmit}>
-      <input placeholder='친구들과 이야기하세요!'
-        value={state.buffer} onChange={onChange} ref={n=>{field=n}}/>
+      <input placeholder='친구들과 이야기하세요!' ref={n=>{field=n}}/>
     </form>
   </div>;
 };
@@ -65,8 +58,7 @@ type DispatchProps = $Diff<Props, StateProps>;
 
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
-  type: message => dispatch({ type: 'TypeMsg', message }),
-  submit: () => dispatch({ type: 'SubmitMsg' }),
+  submit: message => dispatch({ type: 'SubmitMsg', message }),
 });
 const App = connect(mapState, mapDispatch)(View);
 
