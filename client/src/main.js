@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import { render } from 'react-dom'
-import { createStore, compose } from 'redux'
+import { createStore, compose, applyMiddleware } from 'redux'
 import { Provider, connect } from 'react-redux'
 
 import 'normalize.css/normalize.css'
@@ -27,6 +27,16 @@ const reducer = (state: State = init, action: Action): State => {
     return state;
   }
 }
+
+// Communication
+const server = store => next => action => {
+  if (action.type === 'SubmitMsg') {
+    // TODO: Do server job
+    console.log(`Submitting "${action.message}" ...`);
+  }
+
+  return next(action);
+};
 
 // View
 type Props = {
@@ -63,6 +73,7 @@ const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
 const App = connect(mapState, mapDispatch)(View);
 
 const store = createStore(reducer, compose(
+  applyMiddleware(server),
   window.devToolsExtension ? window.devToolsExtension() : f => f
 ));
 
