@@ -19,7 +19,6 @@ get '/api' do
 
     ws.onmessage do |msg|
       EM.next_tick { settings.sockets.each { |s| s.send(msg) } }
-      puts(msg) # Remove
     end
 
     ws.onclose do
