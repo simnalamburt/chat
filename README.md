@@ -13,6 +13,7 @@ npm run build # Build everything
 ```bash
 # Running server
 cd server
+bundle        # Install dependencies
 
 ./run
 ```
