@@ -105,13 +105,15 @@ const View = ({ state, submit, createChannel, changeChannel }: Props) => {
       <ul>
         { Object.keys(state.channels).map(ch => (
           <li id={ch === state.current_channel ? 'current' : null}
-            onClick={_ => changeChannel(ch)}>{ch}</li>
+            key={ch} onClick={_ => changeChannel(ch)}>{ch}</li>
         )) }
       </ul>
     </div>
     <div id='buffer'>
       <ul ref={n=>lines=n}>
-        { state.channels[state.current_channel].map(line => <li>{line}</li>) }
+        { state.channels[state.current_channel].map((line, idx) => (
+          <li key={idx}>{line}</li>
+        )) }
       </ul>
       <form onSubmit={onSubmit}>
         <input className='field' placeholder='친구들과 이야기하세요!' ref={n=>field=n}/>
