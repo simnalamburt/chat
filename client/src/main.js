@@ -278,7 +278,11 @@ const store = createStore(reducer, compose(
 //
 // Communication
 //
-const socket = new WebSocket(`ws://${location.host}/api`);
+const socket = (_ => {
+  const host = location.host;
+  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return new WebSocket(`${protocol}//${host}/api`);
+})();
 
 // 주어진 action 객체를 그대로 서버에 JSON으로 전송한다.
 function sendAction(action: Action) {
