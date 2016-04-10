@@ -1,8 +1,7 @@
-Chat
+Chat [![Build Status]][CI]
 ========
-Simple web-based chat app.
 
-Please visit https://chat.hyeon.me/#7J6R64-ZIOyYiOyLnA for the working sample
+Simple web-based chat app. Please visit https://chat.hyeon.me/#7J6R64-ZIOyYiOyLnA for the working sample
 ```bash
 # Building client-side codes
 cd client
@@ -25,3 +24,6 @@ bundle        # Install dependencies
 # Start the server in production mode
 RACK_ENV=production ./run
 ```
+
+[Build Status]: https://travis-ci.org/simnalamburt/chat.svg?branch=master
+[CI]: https://travis-ci.org/simnalamburt/chat
