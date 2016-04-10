@@ -34,10 +34,10 @@ const init: State = (_ => {
 })();
 
 type Action = {
-  type: 'CreateMsg'|'ReceiveMsg'|'CreateChannel'|'ChangeChannel', // TODO: Remove ReceiveMsg
+  type: 'CreateMsg'|'CreateChannel'|'ChangeChannel', // TODO: Rename CreateMsg -> UpdateMsg
   channel: string,
-  msg_id?: string,  // Only used with 'CreateMsg'|'ReceiveMsg'
-  msg?: Message,    // Only used with 'CreateMsg'|'ReceiveMsg'
+  msg_id?: string,  // Only used with 'CreateMsg'
+  msg?: Message,    // Only used with 'CreateMsg'
 };
 type Dispatch = (action: Action) => Action;
 
@@ -45,8 +45,7 @@ const reducer = (state: State = init, action: Action): State => {
   const { type, channel: ch } = action;
 
   switch (type) {
-  case 'CreateMsg':
-  case 'ReceiveMsg': {
+  case 'CreateMsg': {
     // Validate action
     const { msg_id, msg } = action;
     if (msg_id == null || msg == null) { return state; }
