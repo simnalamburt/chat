@@ -89,6 +89,7 @@ const server = store => next => action => {
 type Props = {
   state: State,
   createMsg: (channel: string, msg: string) => Action,
+  updateMsg: (channel: string, msg: string, msg_id: string) => Action,
   createChannel: (channel: string) => Action,
   changeChannel: (channel: string) => Action,
 };
@@ -101,8 +102,10 @@ const ChannelView = (() => {
       elem.scrollTop = elem.scrollHeight - elem.clientHeight;
     },
     render() {
+      const state: State = this.props.state;
+      const channel = state.channels[state.current_channel];
+
       const lines = [];
-      const channel: Channel = this.props.channel;
       for (const [id, msg] of channel) {
         lines.push(<li key={id}>
           <span className='nick'>오리너구리</span>
@@ -110,16 +113,22 @@ const ChannelView = (() => {
           <span className='control'>
             <i className='fa fa-pencil'/>
             &nbsp;
-            <i className='fa fa-trash-o'/>
+            <i onClick={_ => this.deleteMsg(id)} className='fa fa-trash-o'/>
           </span>
         </li>);
       }
       return <ul ref={n=>elem=n}>{lines}</ul>;
-    }
+    },
+    deleteMsg(id: string) {
+      const { current_channel: ch }: State = this.props.state;
+
+      this.props.updateMsg(ch, '', id);
+    },
   });
 })();
 
-const View = ({ state, createMsg, createChannel, changeChannel }: Props) => {
+const View = (props: Props) => {
+  const { state, createMsg, createChannel, changeChannel } = props
   let field_channel, field;
 
   const onSubmit = e => {
@@ -153,7 +162,7 @@ const View = ({ state, createMsg, createChannel, changeChannel }: Props) => {
       </ul>
     </div>
     <div id='buffer'>
-      <ChannelView channel={state.channels[state.current_channel]}/>
+      <ChannelView {...props}/>
       <form onSubmit={onSubmit}>
         <input className='field' placeholder='친구들과 이야기하세요!' ref={n=>field=n}/>
       </form>
@@ -171,6 +180,7 @@ const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
     type: 'CreateMsg', channel, msg,
     msg_id: UUID.create().toString(),
   }),
+  updateMsg: (channel, msg, msg_id) => dispatch({ type: 'CreateMsg', channel, msg, msg_id }),
   createChannel: channel => dispatch({ type: 'CreateChannel', channel }),
   changeChannel: channel => dispatch({ type: 'ChangeChannel', channel }),
 });
