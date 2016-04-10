@@ -116,11 +116,17 @@ type Props = {
 };
 
 const ChannelView = (() => {
-  let elem;
+  let elem, editingElm;
   return React.createClass({
     componentDidUpdate(params) {
       // TODO: 남이 메세지를 보냈을때도 스크롤이 확확 올라가버리면 곤란함
       elem.scrollTop = elem.scrollHeight - elem.clientHeight;
+
+      if (editingElm != null) { editingElm.focus(); }
+    },
+    onSubmit(e) {
+      e.preventDefault();
+      if (editingElm != null) { editingElm.blur() }
     },
     render() {
       const p: Props = this.props;
@@ -131,13 +137,16 @@ const ChannelView = (() => {
       for (const [id, msg] of channel) {
         const is_editing: bool = editing == null || id.localeCompare(editing) !== 0;
 
-        // TODO: 포커스 잃을때 처리하고, 엔터치면 포커스 사라지도록
-
         lines.push(<li key={id}>
           <span className='nick'>오리너구리</span>
           {(_=> is_editing?
             <div className='content'>{msg}</div> :
-            <input className='content' ref={n =>{n&&n.focus()}} value={msg}/>
+            <form className='content' onSubmit={this.onSubmit}>
+              <input value={msg}
+                ref={n =>editingElm=n}
+                onBlur={p.stopEdit}
+                onChange={_ => p.updateMsg(ch, editingElm.value, id)}/>
+            </form>
           )()}
           <span className='control'>
             <i onClick={_ => p.startEdit(id)} className='fa fa-pencil'/>
