@@ -19,7 +19,8 @@ const new_channel = (): Channel => new Map;
 
 type State = {
   channels: { [name: string]: Channel },
-  current_channel: string
+  current_channel: string,
+  editing: string | null,
 };
 const init: State = (_ => {
   // Accept permalink
@@ -30,24 +31,25 @@ const init: State = (_ => {
   if (!init) { location.hash = init = 'general'; }
   if (!(init in channels)) { channels[init] = new_channel(); }
 
-  return { channels, current_channel: init };
+  return { channels, current_channel: init, editing: null };
 })();
 
 type Action = {
-  type: 'UpdateMsg'|'DeleteMsg'|'CreateChannel'|'ChangeChannel',
-  channel: string,
-  msg_id?: string,  // Only used with 'UpdateMsg'|'DeleteMsg'
-  msg?: Message,    // Only used with 'UpdateMsg'
+  type: 'UpdateMsg'|'DeleteMsg'|'StartEdit'|'StopEdit'|'CreateChannel'|'ChangeChannel',
+
+  channel?: string, // Used with: UpdateMsg | DeleteMsg | CreateChannel | ChangeChannel
+  msg_id?: string,  // Used with: UpdateMsg | DeleteMsg | StartEdit
+  msg?: Message,    // Used with: UpdateMsg
 };
 type Dispatch = (action: Action) => Action;
 
 const reducer = (state: State = init, action: Action): State => {
-  const { type, channel: ch } = action;
+  const { channel: ch, msg_id, msg } = action;
 
-  switch (type) {
+  switch (action.type) {
   case 'UpdateMsg': {
-    const { msg_id, msg } = action;
-    if (msg_id == null || msg == null) { return state; } // Validation
+    // Validation
+    if (ch == null || msg_id == null || msg == null) { return state; }
 
     const next = Object.assign({}, state);
 
@@ -56,10 +58,11 @@ const reducer = (state: State = init, action: Action): State => {
 
     // TODO: 내가 받은적 없는 메세지가 날아오면 새 메세지인것처럼 행동해서 곤란함
     next.channels[ch].set(msg_id, msg);
-    return next; }
+    return next;
+  }
   case 'DeleteMsg': {
-    const { msg_id } = action;
-    if (msg_id == null) { return state; } // Validation
+    // Validation
+    if (ch == null || msg_id == null) { return state; }
 
     const next = Object.assign({}, state);
 
@@ -67,15 +70,34 @@ const reducer = (state: State = init, action: Action): State => {
     if (next.channels[ch] == null) { next.channels[ch] = new_channel(); }
 
     next.channels[ch].delete(msg_id);
-    return next; }
+    return next;
+  }
+  case 'StartEdit': {
+    // Validation
+    if (msg_id == null) { return state; }
+
+    const { channels, current_channel } = state;
+    return { channels, current_channel, editing: msg_id };
+  }
+  case 'StopEdit': {
+    const { channels, current_channel } = state;
+    return { channels, current_channel, editing: null };
+  }
   case 'CreateChannel': {
-    if (ch in state.channels) { return state; }
+    // Validation
+    if (ch == null || ch in state.channels) { return state; }
 
     const next = Object.assign({}, state);
     next.channels[ch] = new_channel();
-    return next; }
-  case 'ChangeChannel':
-    return { channels: state.channels, current_channel: ch };
+    return next;
+  }
+  case 'ChangeChannel': {
+    // Validation
+    if (ch == null) { return state; }
+
+    const { channels } = state;
+    return { channels, current_channel: ch, editing: null };
+  }
   default:
     return state;
   }
@@ -89,6 +111,8 @@ type Props = {
   state: State,
   updateMsg: (channel: string, msg: string, msg_id?: string) => Action,
   deleteMsg: (channel: string, msg_id: string) => Action,
+  startEdit: (msg_id: string) => Action,
+  stopEdit: () => Action,
   createChannel: (channel: string) => Action,
   changeChannel: (channel: string) => Action,
 };
@@ -189,6 +213,8 @@ const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
     sendAction(action);
     return dispatch(action);
   },
+  startEdit: (msg_id) => dispatch({ type: 'StartEdit', msg_id }),
+  stopEdit: () => dispatch({ type: 'StopEdit' }),
   createChannel: channel => dispatch({ type: 'CreateChannel', channel }),
   changeChannel: channel => dispatch({ type: 'ChangeChannel', channel }),
 });
