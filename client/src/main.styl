@@ -39,6 +39,10 @@ a:link, a:visited
       list-style-type: none
       cursor: pointer
 
+      > li
+        overflow-x: hidden
+        white-space: nowrap
+        text-overflow: ellipsis
       > li:hover { background: #F0F0F0 }
       > li#current
         font-weight: 600
