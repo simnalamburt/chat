@@ -164,7 +164,8 @@ const ChannelView = (() => {
       const channel = p.state.channels[ch];
 
       const lines = [];
-      for (const [id, { usernick, txt }] of channel) {
+      for (const [id, { userid, usernick, txt }] of channel) {
+        const is_editable: bool = userid.localeCompare(myid) === 0;
         const is_editing: bool = editing == null || id.localeCompare(editing) !== 0;
 
         lines.push(<li key={id}>
@@ -178,11 +179,13 @@ const ChannelView = (() => {
                 onChange={_ => p.updateMsg(ch, editingElm.value, id)}/>
             </form>
           )()}
-          <span className='control'>
-            <i onClick={_ => p.startEdit(id)} className='fa fa-pencil'/>
-            &nbsp;
-            <i onClick={_ => p.deleteMsg(ch, id)} className='fa fa-trash-o'/>
-          </span>
+          {(_=> !is_editable? null :
+            <span className='control'>
+              <i onClick={_ => p.startEdit(id)} className='fa fa-pencil'/>
+              &nbsp;
+              <i onClick={_ => p.deleteMsg(ch, id)} className='fa fa-trash-o'/>
+            </span>
+          )()}
         </li>);
       }
       return <ul ref={n=>elem=n}>{lines}</ul>;
