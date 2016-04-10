@@ -34,10 +34,10 @@ const init: State = (_ => {
 })();
 
 type Action = {
-  type: 'CreateMsg'|'CreateChannel'|'ChangeChannel', // TODO: Rename CreateMsg -> UpdateMsg
+  type: 'UpdateMsg'|'CreateChannel'|'ChangeChannel',
   channel: string,
-  msg_id?: string,  // Only used with 'CreateMsg'
-  msg?: Message,    // Only used with 'CreateMsg'
+  msg_id?: string,  // Only used with 'UpdateMsg'
+  msg?: Message,    // Only used with 'UpdateMsg'
 };
 type Dispatch = (action: Action) => Action;
 
@@ -45,7 +45,7 @@ const reducer = (state: State = init, action: Action): State => {
   const { type, channel: ch } = action;
 
   switch (type) {
-  case 'CreateMsg': {
+  case 'UpdateMsg': {
     // Validate action
     const { msg_id, msg } = action;
     if (msg_id == null || msg == null) { return state; }
@@ -172,12 +172,12 @@ const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
   // TODO: Remove
   createMsg: (channel, msg) => {
     const msg_id = UUID.create().toString();
-    const action = { type: 'CreateMsg', channel, msg, msg_id };
+    const action = { type: 'UpdateMsg', channel, msg, msg_id };
     sendAction(action);
     return dispatch(action);
   },
   updateMsg: (channel, msg, msg_id) => {
-    const action = { type: 'CreateMsg', channel, msg, msg_id };
+    const action = { type: 'UpdateMsg', channel, msg, msg_id };
     sendAction(action);
     return dispatch(action);
   },
