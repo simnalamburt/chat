@@ -2,5 +2,5 @@
 .*/node_modules/fbjs
 
 [options]
-module.name_mapper='^.*\.\(css\|styl\|md\)$' -> 'empty/object'
+module.name_mapper='^.*\.\(css\|styl\|txt\)$' -> 'empty/object'
 suppress_comment= \\(.\\|\n\\)*\\$FlowIssue

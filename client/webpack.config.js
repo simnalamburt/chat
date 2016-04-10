@@ -25,6 +25,7 @@ module.exports = {
   plugins: process.env.NODE_ENV !== 'production' ? plugs : plugs.concat(prod),
   module: {
     loaders: [
+      { test: /\.txt$/, loader: 'raw' },
       { test: /\.png$/, loader: 'file?name=static/[hash].[ext]' },
       { test: /\.(woff(2)?|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file?name=static/[hash].[ext]' },
       { test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css') },

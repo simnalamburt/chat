@@ -5,9 +5,18 @@ import { createStore, compose, applyMiddleware } from 'redux'
 import { Provider, connect } from 'react-redux'
 import UUID from 'uuid-js'
 
+import nickfile from './nicks.txt'
+
 import 'normalize.css/normalize.css'
 import 'font-awesome/css/font-awesome.css'
 import './main.styl'
+
+// Use random nickname
+// TODO: 바꿀 수 있도록 하기
+const mynick = (_ => {
+  const nicks = nickfile.split('\n').filter(n => n);
+  return nicks[Math.floor(Math.random()*nicks.length)];
+})();
 
 
 //
@@ -24,8 +33,9 @@ type State = {
 };
 const init: State = (_ => {
   // Accept permalink
-  const names = ['general', 'random', 'notice'];
-  const channels: Object = names.map(k => ({[k]: new_channel()})).reduce((l, r) => Object.assign(l, r))
+  const channels: Object = ['general', 'random', 'notice']
+  .map(k => ({[k]: new_channel()}))
+  .reduce((l, r) => Object.assign(l, r));
 
   let init = location.hash.slice(1);
   if (!init) { location.hash = init = 'general'; }
@@ -137,8 +147,9 @@ const ChannelView = (() => {
       for (const [id, msg] of channel) {
         const is_editing: bool = editing == null || id.localeCompare(editing) !== 0;
 
+        // TODO: 닉네임
         lines.push(<li key={id}>
-          <span className='nick'>오리너구리</span>
+          <span className='nick'>{mynick}</span>
           {(_=> is_editing?
             <div className='content'>{msg}</div> :
             <form className='content' onSubmit={this.onSubmit}>
@@ -197,7 +208,8 @@ const View = (props: Props) => {
     <div id='buffer'>
       <ChannelView {...props}/>
       <form onSubmit={onSubmit}>
-        <input className='field' placeholder='친구들과 이야기하세요!' ref={n=>field=n}/>
+        <span>{mynick}</span>
+        <input className='field' placeholder='다른 동물 친구들과 이야기하세요!' ref={n=>field=n}/>
       </form>
     </div>
   </div>;

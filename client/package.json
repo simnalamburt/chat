@@ -16,6 +16,7 @@
     "file-loader": "^0.8.5",
     "flow-bin": "^0.22.1",
     "postcss-loader": "^0.8.2",
+    "raw-loader": "^0.5.1",
     "style-loader": "^0.13.1",
     "stylus-loader": "^1.5.1",
     "webpack": "^1.12.14"
