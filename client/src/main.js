@@ -4,6 +4,7 @@ import { render } from 'react-dom'
 import { createStore, compose, applyMiddleware } from 'redux'
 import { Provider, connect } from 'react-redux'
 import UUID from 'uuid-js'
+import ReconnectingWebSocket from 'reconnectingwebsocket'
 
 import nickfile from './nicks.txt'
 
@@ -281,7 +282,7 @@ const store = createStore(reducer, compose(
 const socket = (_ => {
   const host = location.host;
   const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  return new WebSocket(`${protocol}//${host}/api`);
+  return new ReconnectingWebSocket(`${protocol}//${host}/api`);
 })();
 
 // 주어진 action 객체를 그대로 서버에 JSON으로 전송한다.
