@@ -1,6 +1,6 @@
-Chatting
+Chat
 ========
-Simple web-based chatting app.
+Simple web-based chat app.
 
 ```bash
 # Building client-side codes
