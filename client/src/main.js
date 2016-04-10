@@ -34,9 +34,9 @@ const init: State = (_ => {
 })();
 
 type Action = {
-  type: 'UpdateMsg'|'CreateChannel'|'ChangeChannel',
+  type: 'UpdateMsg'|'DeleteMsg'|'CreateChannel'|'ChangeChannel',
   channel: string,
-  msg_id?: string,  // Only used with 'UpdateMsg'
+  msg_id?: string,  // Only used with 'UpdateMsg'|'DeleteMsg'
   msg?: Message,    // Only used with 'UpdateMsg'
 };
 type Dispatch = (action: Action) => Action;
@@ -46,18 +46,27 @@ const reducer = (state: State = init, action: Action): State => {
 
   switch (type) {
   case 'UpdateMsg': {
-    // Validate action
     const { msg_id, msg } = action;
-    if (msg_id == null || msg == null) { return state; }
+    if (msg_id == null || msg == null) { return state; } // Validation
 
     const next = Object.assign({}, state);
 
     // 내가 모르는 채널에서 메세지가 올 경우, 그 채널을 추가
-    if (next.channels[ch] == null) {
-      next.channels[ch] = new_channel();
-    }
+    if (next.channels[ch] == null) { next.channels[ch] = new_channel(); }
 
+    // TODO: 내가 받은적 없는 메세지가 날아오면 새 메세지인것처럼 행동해서 곤란함
     next.channels[ch].set(msg_id, msg);
+    return next; }
+  case 'DeleteMsg': {
+    const { msg_id } = action;
+    if (msg_id == null) { return state; } // Validation
+
+    const next = Object.assign({}, state);
+
+    // 내가 모르는 채널의 메세지 삭제일경우, 그 채널을 추가
+    if (next.channels[ch] == null) { next.channels[ch] = new_channel(); }
+
+    next.channels[ch].delete(msg_id);
     return next; }
   case 'CreateChannel': {
     if (ch in state.channels) { return state; }
@@ -79,6 +88,7 @@ const reducer = (state: State = init, action: Action): State => {
 type Props = {
   state: State,
   updateMsg: (channel: string, msg: string, msg_id?: string) => Action,
+  deleteMsg: (channel: string, msg_id: string) => Action,
   createChannel: (channel: string) => Action,
   changeChannel: (channel: string) => Action,
 };
@@ -109,12 +119,10 @@ const ChannelView = (() => {
       return <ul ref={n=>elem=n}>{lines}</ul>;
     },
     updateMsg(id: string, msg: string) {
-      const { current_channel: ch }: State = this.props.state;
-      this.props.updateMsg(ch, msg, id);
+      this.props.updateMsg(this.props.state.current_channel, msg, id);
     },
     deleteMsg(id: string) {
-      const { current_channel: ch }: State = this.props.state;
-      this.props.updateMsg(ch, '/* 아직 메세지 삭제 기능이 구현 안됨 */', id);
+      this.props.deleteMsg(this.props.state.current_channel, id);
     },
   });
 })();
@@ -173,6 +181,11 @@ const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
   updateMsg: (channel, msg, msg_id = UUID.create().toString()) => {
     const action = { type: 'UpdateMsg', channel, msg, msg_id };
+    sendAction(action);
+    return dispatch(action);
+  },
+  deleteMsg: (channel, msg_id) => {
+    const action = { type: 'DeleteMsg', channel, msg_id };
     sendAction(action);
     return dispatch(action);
   },
