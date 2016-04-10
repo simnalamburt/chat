@@ -10,7 +10,9 @@ import 'font-awesome/css/font-awesome.css'
 import './main.styl'
 
 
+//
 // States
+//
 type Message = string;
 type Channel = Map<string, Message>;
 const new_channel = (): Channel => new Map;
@@ -32,7 +34,7 @@ const init: State = (_ => {
 })();
 
 type Action = {
-  type: 'CreateMsg'|'ReceiveMsg'|'CreateChannel'|'ChangeChannel',
+  type: 'CreateMsg'|'ReceiveMsg'|'CreateChannel'|'ChangeChannel', // TODO: Remove ReceiveMsg
   channel: string,
   msg_id?: string,  // Only used with 'CreateMsg'|'ReceiveMsg'
   msg?: Message,    // Only used with 'CreateMsg'|'ReceiveMsg'
@@ -71,21 +73,10 @@ const reducer = (state: State = init, action: Action): State => {
   }
 }
 
-// Communication (1)
-const socket = new WebSocket(`ws://${location.host}/api`);
 
-// 어플리케이션 에서 내부적으로 'CreateMsg' 이벤트가 발생하였을경우, 타입만
-// 'ReceiveMsg' 로 바꾼뒤 그대로 직렬화하여 서버로 전송한다.
-const server = store => next => action => {
-  if (action.type === 'CreateMsg') {
-    const newaction = Object.assign({}, action);
-    newaction.type = 'ReceiveMsg';
-    socket.send(JSON.stringify(newaction));
-  }
-  return next(action);
-};
-
+//
 // View
+//
 type Props = {
   state: State,
   createMsg: (channel: string, msg: string) => Action,
@@ -170,40 +161,61 @@ const View = (props: Props) => {
   </div>;
 };
 
+
+//
 // App
+//
 type StateProps = { state: State };
 type DispatchProps = $Diff<Props, StateProps>;
 
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
-  createMsg: (channel, msg) => dispatch({
-    type: 'CreateMsg', channel, msg,
-    msg_id: UUID.create().toString(),
-  }),
-  updateMsg: (channel, msg, msg_id) => dispatch({ type: 'CreateMsg', channel, msg, msg_id }),
+  // TODO: Remove
+  createMsg: (channel, msg) => {
+    const msg_id = UUID.create().toString();
+    const action = { type: 'CreateMsg', channel, msg, msg_id };
+    sendAction(action);
+    return dispatch(action);
+  },
+  updateMsg: (channel, msg, msg_id) => {
+    const action = { type: 'CreateMsg', channel, msg, msg_id };
+    sendAction(action);
+    return dispatch(action);
+  },
   createChannel: channel => dispatch({ type: 'CreateChannel', channel }),
   changeChannel: channel => dispatch({ type: 'ChangeChannel', channel }),
 });
 const App = connect(mapState, mapDispatch)(View);
 
 const store = createStore(reducer, compose(
-  applyMiddleware(server),
   window.devToolsExtension ? window.devToolsExtension() : f => f
 ));
 
-// Communication (2)
+
+//
+// Communication
+//
+const socket = new WebSocket(`ws://${location.host}/api`);
+
+// 주어진 action 객체를 그대로 서버에 JSON으로 전송한다.
+function sendAction(action: Action) {
+  return socket.send(JSON.stringify(action));
+}
+
 socket.onmessage = event => {
   // 서버로부터 전달받은 action 객체를 그대로 dispatch 한다
   store.dispatch(JSON.parse(event.data));
 }
 
-// Generate permalink
+
+//
+// Etc
+//
 store.subscribe(() => {
+  // Generate permalink
   location.hash = store.getState().current_channel;
 });
 
-
-// Entry Point
 render(
   <Provider store={store}>
     <App/>
