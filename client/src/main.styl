@@ -27,6 +27,7 @@ a:link, a:visited
 
   > #channels
     width: 100px
+    flex-shrink: 0
 
     border-width: 0 1px 0 0
     border-style: solid
@@ -62,9 +63,14 @@ a:link, a:visited
           color: gray
           font-size: 0.8em
           margin-right: 10px
-        > .content { flex-grow: 1 }
+          white-space: nowrap
+          flex-shrink: 0
+        > .content
+          flex-grow: 1
+          word-break: break-all
         > .control
           margin-right: 10px
+          white-space: nowrap
           > i { cursor: pointer }
 
         &:hover { background: #F0F0F0 }
