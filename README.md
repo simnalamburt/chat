@@ -25,6 +25,16 @@ bundle        # Install dependencies
 RACK_ENV=production ./run
 ```
 
+![Sample Image](sample.png)
+
+**spoqa** 채널은 한 카카오톡 채팅방과 연결되어있습니다! 카카오톡 채팅방에
+입장하시려면 홍민희님([@dahlia](https://github.com/dahlia))이나 저에게 초대를
+부탁하시면 됩니다.
+
+<br>
+
+--------
+
 ### Note
 > 모든 대화에는 퍼머링크가 있어, 이 퍼머링크를 통해 해당 대화를 웹으로 볼 수 있어야 합니다.
 
