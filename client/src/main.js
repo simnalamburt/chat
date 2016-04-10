@@ -25,7 +25,7 @@ const init: State = (_ => {
   const channels: Object = names.map(k => ({[k]: new_channel()})).reduce((l, r) => Object.assign(l, r))
 
   let init = location.hash.slice(1);
-  if (!init) { init = 'general'; }
+  if (!init) { location.hash = init = 'general'; }
   if (!(init in channels)) { channels[init] = new_channel(); }
 
   return { channels, current_channel: init };
