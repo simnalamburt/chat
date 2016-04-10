@@ -100,7 +100,7 @@ const ChannelView = (() => {
           <span className='nick'>오리너구리</span>
           <span className='content'>{msg}</span>
           <span className='control'>
-            <i className='fa fa-pencil'/>
+            <i onClick={_ => this.updateMsg(id, '수정')} className='fa fa-pencil'/>
             &nbsp;
             <i onClick={_ => this.deleteMsg(id)} className='fa fa-trash-o'/>
           </span>
@@ -108,10 +108,13 @@ const ChannelView = (() => {
       }
       return <ul ref={n=>elem=n}>{lines}</ul>;
     },
+    updateMsg(id: string, msg: string) {
+      const { current_channel: ch }: State = this.props.state;
+      this.props.updateMsg(ch, msg, id);
+    },
     deleteMsg(id: string) {
       const { current_channel: ch }: State = this.props.state;
-
-      this.props.updateMsg(ch, '', id);
+      this.props.updateMsg(ch, '/* 아직 메세지 삭제 기능이 구현 안됨 */', id);
     },
   });
 })();
