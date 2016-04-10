@@ -17,6 +17,10 @@ npm start     # Run webpack in watch mode
 cd server
 bundle        # Install dependencies
 
-./run         # Run a server
+./run         # Start a server
               # See http://localhost:4567
+
+
+# Start the server in production mode
+RACK_ENV=production ./run
 ```
