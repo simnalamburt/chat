@@ -13,23 +13,29 @@ import './main.styl'
 
 // Use random nickname
 // TODO: 바꿀 수 있도록 하기
-const mynick = (_ => {
+const mynick: string = (_ => {
   const nicks = nickfile.split('\n').filter(n => n);
   return nicks[Math.floor(Math.random()*nicks.length)];
 })();
+
+const myid: string = UUID.create().toString();
 
 
 //
 // States
 //
-type Message = string;
+type Message = {
+  userid: string,
+  usernick: string,
+  txt: string,
+};
 type Channel = Map<string, Message>;
 const new_channel = (): Channel => new Map;
 
 type State = {
   channels: { [name: string]: Channel },
   current_channel: string,
-  editing: string | null,
+  editing: ?string,
 };
 const init: State = (_ => {
   // Accept permalink
@@ -45,39 +51,52 @@ const init: State = (_ => {
 })();
 
 type Action = {
-  type: 'UpdateMsg'|'DeleteMsg'|'StartEdit'|'StopEdit'|'CreateChannel'|'ChangeChannel',
+  type: 'CreateMsg'|'UpdateMsg'|'DeleteMsg'|'StartEdit'|'StopEdit'|'CreateChannel'|'ChangeChannel',
 
   channel?: string, // Used with: UpdateMsg | DeleteMsg | CreateChannel | ChangeChannel
-  msg_id?: string,  // Used with: UpdateMsg | DeleteMsg | StartEdit
-  msg?: Message,    // Used with: UpdateMsg
+  msg?: Message,    // Used with: CreateMsg
+  msg_id?: string,  // Used with: CreateMsg | UpdateMsg | DeleteMsg | StartEdit
+  msg_txt?: string  // Used with: UpdateMsg
 };
 type Dispatch = (action: Action) => Action;
 
 const reducer = (state: State = init, action: Action): State => {
-  const { channel: ch, msg_id, msg } = action;
+  const { channel: ch, msg, msg_id, msg_txt } = action;
   switch (action.type) {
-    case 'UpdateMsg': {
+    case 'CreateMsg': {
       // Validation
       if (ch == null || msg_id == null || msg == null) { return state; }
 
       const next = Object.assign({}, state);
 
       // 내가 모르는 채널에서 메세지가 올 경우, 그 채널을 추가
-      if (next.channels[ch] == null) { next.channels[ch] = new_channel(); }
+      if (!(ch in next.channels)) { next.channels[ch] = new_channel(); }
 
-      // TODO: 내가 받은적 없는 메세지가 날아오면 새 메세지인것처럼 행동해서 곤란함
       next.channels[ch].set(msg_id, msg);
+      return next;
+    }
+    case 'UpdateMsg': {
+      // Validation
+      if (ch == null || msg_id == null || msg_txt == null) { return state; }
+
+      // 내가 모르는 채널의 메세지 수정일경우, 무시
+      if (!(ch in state.channels)) { return state; }
+      // 내가 받은적 없는 메세지의 수정일경우, 무시
+      if (state.channels[ch].get(msg_id) == null) { return state; }
+
+      const next = Object.assign({}, state);
+      // $FlowIssue: The result of `.get(msg_id)` cannot be `undefined`
+      next.channels[ch].get(msg_id).txt = msg_txt;
       return next;
     }
     case 'DeleteMsg': {
       // Validation
       if (ch == null || msg_id == null) { return state; }
 
+      // 내가 모르는 채널의 메세지 삭제일경우, 무시
+      if (!(ch in state.channels)) { return state; }
+
       const next = Object.assign({}, state);
-
-      // 내가 모르는 채널의 메세지 삭제일경우, 그 채널을 추가
-      if (next.channels[ch] == null) { next.channels[ch] = new_channel(); }
-
       next.channels[ch].delete(msg_id);
       return next;
     }
@@ -117,7 +136,8 @@ const reducer = (state: State = init, action: Action): State => {
 //
 type Props = {
   state: State,
-  updateMsg: (channel: string, msg: string, msg_id?: string) => Action,
+  createMsg: (channel: string, msg_txt: string) => Action,
+  updateMsg: (channel: string, msg_txt: string, msg_id: string) => Action,
   deleteMsg: (channel: string, msg_id: string) => Action,
   startEdit: (msg_id: string) => Action,
   stopEdit: () => Action,
@@ -144,16 +164,15 @@ const ChannelView = (() => {
       const channel = p.state.channels[ch];
 
       const lines = [];
-      for (const [id, msg] of channel) {
+      for (const [id, { usernick, txt }] of channel) {
         const is_editing: bool = editing == null || id.localeCompare(editing) !== 0;
 
-        // TODO: 닉네임
         lines.push(<li key={id}>
-          <span className='nick'>{mynick}</span>
+          <span className='nick'>{usernick}</span>
           {(_=> is_editing?
-            <div className='content'>{msg}</div> :
+            <div className='content'>{txt}</div> :
             <form className='content' onSubmit={this.onSubmit}>
-              <input value={msg}
+              <input value={txt}
                 ref={n =>editingElm=n}
                 onBlur={p.stopEdit}
                 onChange={_ => p.updateMsg(ch, editingElm.value, id)}/>
@@ -172,14 +191,14 @@ const ChannelView = (() => {
 })();
 
 const View = (props: Props) => {
-  const { state, updateMsg, createChannel, changeChannel } = props
+  const { state, createMsg, createChannel, changeChannel } = props
   let field_channel, field;
 
   const onSubmit = e => {
     e.preventDefault();
     if (!field.value) { return; }
 
-    updateMsg(state.current_channel, field.value);
+    createMsg(state.current_channel, field.value);
     field.value = '';
   };
 
@@ -224,8 +243,15 @@ type DispatchProps = $Diff<Props, StateProps>;
 
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
-  updateMsg: (channel, msg, msg_id = UUID.create().toString()) => {
-    const action = { type: 'UpdateMsg', channel, msg, msg_id };
+  createMsg: (channel, txt) => {
+    const msg_id = UUID.create().toString();
+    const msg = { userid: myid, usernick: mynick, txt }
+    const action = { type: 'CreateMsg', channel, msg, msg_id };
+    sendAction(action);
+    return dispatch(action);
+  },
+  updateMsg: (channel, msg_txt, msg_id) => {
+    const action = { type: 'UpdateMsg', channel, msg_txt, msg_id };
     sendAction(action);
     return dispatch(action);
   },
