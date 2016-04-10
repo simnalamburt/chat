@@ -78,8 +78,7 @@ const reducer = (state: State = init, action: Action): State => {
 //
 type Props = {
   state: State,
-  createMsg: (channel: string, msg: string) => Action,
-  updateMsg: (channel: string, msg: string, msg_id: string) => Action,
+  updateMsg: (channel: string, msg: string, msg_id?: string) => Action,
   createChannel: (channel: string) => Action,
   changeChannel: (channel: string) => Action,
 };
@@ -118,14 +117,14 @@ const ChannelView = (() => {
 })();
 
 const View = (props: Props) => {
-  const { state, createMsg, createChannel, changeChannel } = props
+  const { state, updateMsg, createChannel, changeChannel } = props
   let field_channel, field;
 
   const onSubmit = e => {
     e.preventDefault();
     if (!field.value) { return; }
 
-    createMsg(state.current_channel, field.value);
+    updateMsg(state.current_channel, field.value);
     field.value = '';
   };
 
@@ -169,14 +168,7 @@ type DispatchProps = $Diff<Props, StateProps>;
 
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
-  // TODO: Remove
-  createMsg: (channel, msg) => {
-    const msg_id = UUID.create().toString();
-    const action = { type: 'UpdateMsg', channel, msg, msg_id };
-    sendAction(action);
-    return dispatch(action);
-  },
-  updateMsg: (channel, msg, msg_id) => {
+  updateMsg: (channel, msg, msg_id = UUID.create().toString()) => {
     const action = { type: 'UpdateMsg', channel, msg, msg_id };
     sendAction(action);
     return dispatch(action);
