@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "font-awesome": "^4.5.0",
+    "js-base64": "^2.1.9",
     "normalize.css": "^4.0.0",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",

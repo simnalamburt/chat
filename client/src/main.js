@@ -5,6 +5,7 @@ import { createStore, compose, applyMiddleware } from 'redux'
 import { Provider, connect } from 'react-redux'
 import UUID from 'uuid-js'
 import ReconnectingWebSocket from 'reconnectingwebsocket'
+import { Base64 } from 'js-base64'
 
 import nickfile from './nicks.txt'
 
@@ -20,6 +21,13 @@ const mynick: string = (_ => {
 })();
 
 const myid: string = UUID.create().toString();
+
+
+//
+// Permalink
+//
+function getBase64Hash(): string { return Base64.decode(location.hash.slice(1)); }
+function setBase64Hash(name: string) { location.hash = Base64.encodeURI(name); }
 
 
 //
@@ -44,8 +52,8 @@ const init: State = (_ => {
   .map(k => ({[k]: new_channel()}))
   .reduce((l, r) => Object.assign(l, r));
 
-  let init = location.hash.slice(1);
-  if (!init) { location.hash = init = 'general'; }
+  let init = getBase64Hash();
+  if (!init) { setBase64Hash(init = 'general'); } // Default channel
   if (!(init in channels)) { channels[init] = new_channel(); }
 
   return { channels, current_channel: init, editing: null };
@@ -301,7 +309,7 @@ socket.onmessage = event => {
 //
 store.subscribe(() => {
   // Generate permalink
-  location.hash = store.getState().current_channel;
+  setBase64Hash(store.getState().current_channel);
 });
 
 render(
