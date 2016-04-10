@@ -88,7 +88,7 @@ const server = store => next => action => {
 // View
 type Props = {
   state: State,
-  submit: (channel: string, msg: string) => Action,
+  createMsg: (channel: string, msg: string) => Action,
   createChannel: (channel: string) => Action,
   changeChannel: (channel: string) => Action,
 };
@@ -119,14 +119,14 @@ const ChannelView = (() => {
   });
 })();
 
-const View = ({ state, submit, createChannel, changeChannel }: Props) => {
+const View = ({ state, createMsg, createChannel, changeChannel }: Props) => {
   let field_channel, field;
 
   const onSubmit = e => {
     e.preventDefault();
     if (!field.value) { return; }
 
-    submit(state.current_channel, field.value);
+    createMsg(state.current_channel, field.value);
     field.value = '';
   };
 
@@ -167,7 +167,7 @@ type DispatchProps = $Diff<Props, StateProps>;
 
 const mapState = (state: State): StateProps => ({ state });
 const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
-  submit: (channel, msg) => dispatch({
+  createMsg: (channel, msg) => dispatch({
     type: 'CreateMsg', channel, msg,
     msg_id: UUID.create().toString(),
   }),
