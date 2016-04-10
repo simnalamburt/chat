@@ -47,59 +47,58 @@ const reducer = (state: State = init, action: Action): State => {
   const { channel: ch, msg_id, msg } = action;
 
   switch (action.type) {
-  case 'UpdateMsg': {
-    // Validation
-    if (ch == null || msg_id == null || msg == null) { return state; }
+    case 'UpdateMsg': {
+      // Validation
+      if (ch == null || msg_id == null || msg == null) { return state; }
 
-    const next = Object.assign({}, state);
+      const next = Object.assign({}, state);
 
-    // 내가 모르는 채널에서 메세지가 올 경우, 그 채널을 추가
-    if (next.channels[ch] == null) { next.channels[ch] = new_channel(); }
+      // 내가 모르는 채널에서 메세지가 올 경우, 그 채널을 추가
+      if (next.channels[ch] == null) { next.channels[ch] = new_channel(); }
 
-    // TODO: 내가 받은적 없는 메세지가 날아오면 새 메세지인것처럼 행동해서 곤란함
-    next.channels[ch].set(msg_id, msg);
-    return next;
-  }
-  case 'DeleteMsg': {
-    // Validation
-    if (ch == null || msg_id == null) { return state; }
+      // TODO: 내가 받은적 없는 메세지가 날아오면 새 메세지인것처럼 행동해서 곤란함
+      next.channels[ch].set(msg_id, msg);
+      return next;
+    }
+    case 'DeleteMsg': {
+      // Validation
+      if (ch == null || msg_id == null) { return state; }
 
-    const next = Object.assign({}, state);
+      const next = Object.assign({}, state);
 
-    // 내가 모르는 채널의 메세지 삭제일경우, 그 채널을 추가
-    if (next.channels[ch] == null) { next.channels[ch] = new_channel(); }
+      // 내가 모르는 채널의 메세지 삭제일경우, 그 채널을 추가
+      if (next.channels[ch] == null) { next.channels[ch] = new_channel(); }
 
-    next.channels[ch].delete(msg_id);
-    return next;
-  }
-  case 'StartEdit': {
-    // Validation
-    if (msg_id == null) { return state; }
+      next.channels[ch].delete(msg_id);
+      return next;
+    }
+    case 'StartEdit': {
+      // Validation
+      if (msg_id == null) { return state; }
 
-    const { channels, current_channel } = state;
-    return { channels, current_channel, editing: msg_id };
-  }
-  case 'StopEdit': {
-    const { channels, current_channel } = state;
-    return { channels, current_channel, editing: null };
-  }
-  case 'CreateChannel': {
-    // Validation
-    if (ch == null || ch in state.channels) { return state; }
+      const { channels, current_channel } = state;
+      return { channels, current_channel, editing: msg_id };
+    }
+    case 'StopEdit': {
+      const { channels, current_channel } = state;
+      return { channels, current_channel, editing: null };
+    }
+    case 'CreateChannel': {
+      // Validation
+      if (ch == null || ch in state.channels) { return state; }
 
-    const next = Object.assign({}, state);
-    next.channels[ch] = new_channel();
-    return next;
-  }
-  case 'ChangeChannel': {
-    // Validation
-    if (ch == null) { return state; }
+      const next = Object.assign({}, state);
+      next.channels[ch] = new_channel();
+      return next;
+    }
+    case 'ChangeChannel': {
+      // Validation
+      if (ch == null) { return state; }
 
-    const { channels } = state;
-    return { channels, current_channel: ch, editing: null };
-  }
-  default:
-    return state;
+      const { channels } = state;
+      return { channels, current_channel: ch, editing: null };
+    }
+    default: return state;
   }
 }
 
