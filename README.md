@@ -2,6 +2,7 @@ Chat
 ========
 Simple web-based chat app.
 
+Please visit https://chat.hyeon.me/#general for the working sample
 ```bash
 # Building client-side codes
 cd client
