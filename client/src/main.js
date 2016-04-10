@@ -45,7 +45,6 @@ type Dispatch = (action: Action) => Action;
 
 const reducer = (state: State = init, action: Action): State => {
   const { channel: ch, msg_id, msg } = action;
-
   switch (action.type) {
     case 'UpdateMsg': {
       // Validation
@@ -124,28 +123,30 @@ const ChannelView = (() => {
       elem.scrollTop = elem.scrollHeight - elem.clientHeight;
     },
     render() {
-      const state: State = this.props.state;
-      const channel = state.channels[state.current_channel];
+      const p: Props = this.props;
+      const { current_channel: ch, editing } = p.state;
+      const channel = p.state.channels[ch];
 
       const lines = [];
       for (const [id, msg] of channel) {
+        const is_editing: bool = editing == null || id.localeCompare(editing) !== 0;
+
+        // TODO: 포커스 잃을때 처리하고, 엔터치면 포커스 사라지도록
+
         lines.push(<li key={id}>
           <span className='nick'>오리너구리</span>
-          <span className='content'>{msg}</span>
+          {(_=> is_editing?
+            <div className='content'>{msg}</div> :
+            <input className='content' ref={n =>{n&&n.focus()}} value={msg}/>
+          )()}
           <span className='control'>
-            <i onClick={_ => this.updateMsg(id, '수정')} className='fa fa-pencil'/>
+            <i onClick={_ => p.startEdit(id)} className='fa fa-pencil'/>
             &nbsp;
-            <i onClick={_ => this.deleteMsg(id)} className='fa fa-trash-o'/>
+            <i onClick={_ => p.deleteMsg(ch, id)} className='fa fa-trash-o'/>
           </span>
         </li>);
       }
       return <ul ref={n=>elem=n}>{lines}</ul>;
-    },
-    updateMsg(id: string, msg: string) {
-      this.props.updateMsg(this.props.state.current_channel, msg, id);
-    },
-    deleteMsg(id: string) {
-      this.props.deleteMsg(this.props.state.current_channel, id);
     },
   });
 })();
