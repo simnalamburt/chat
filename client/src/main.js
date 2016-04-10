@@ -40,25 +40,32 @@ type Action = {
 type Dispatch = (action: Action) => Action;
 
 const reducer = (state: State = init, action: Action): State => {
-  switch (action.type) {
+  const { type, channel: ch } = action;
+
+  switch (type) {
   case 'CreateMsg':
   case 'ReceiveMsg': {
     // Validate action
     const { msg_id, msg } = action;
     if (msg_id == null || msg == null) { return state; }
 
-    const newstate = Object.assign({}, state);
-    const channel = newstate.channels[action.channel];
-    channel.set(msg_id, msg);
-    return newstate; }
-  case 'CreateChannel': {
-    if (action.channel in state.channels) { return state; }
+    const next = Object.assign({}, state);
 
-    const newstate = Object.assign({}, state);
-    newstate.channels[action.channel] = new_channel();
-    return newstate; }
+    // 내가 모르는 채널에서 메세지가 올 경우, 그 채널을 추가
+    if (next.channels[ch] == null) {
+      next.channels[ch] = new_channel();
+    }
+
+    next.channels[ch].set(msg_id, msg);
+    return next; }
+  case 'CreateChannel': {
+    if (ch in state.channels) { return state; }
+
+    const next = Object.assign({}, state);
+    next.channels[ch] = new_channel();
+    return next; }
   case 'ChangeChannel':
-    return { channels: state.channels, current_channel: action.channel };
+    return { channels: state.channels, current_channel: ch };
   default:
     return state;
   }
