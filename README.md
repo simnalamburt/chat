@@ -26,5 +26,9 @@ bundle        # Install dependencies
 RACK_ENV=production ./run
 ```
 
+--------
+
+MIT License
+
 [Build Status]: https://travis-ci.org/simnalamburt/chat.svg?branch=master
 [Travis CI]: https://travis-ci.org/simnalamburt/chat
