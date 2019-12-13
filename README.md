@@ -9,8 +9,6 @@ cd client
 
 yarn install  # Install dependencies
 yarn build    # Build
-
-yarn start    # Run webpack in watch mode
 ```
 ```bash
 # Running server

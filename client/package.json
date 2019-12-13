@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "build": "webpack",
-    "start": "webpack --watch"
+    "build": "webpack"
   },
   "devDependencies": {
     "css-loader": "^0.23.1",
