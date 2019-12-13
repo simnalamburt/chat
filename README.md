@@ -9,7 +9,7 @@ cd client
 
 yarn
 yarn build
-# TODO: 프로덕션 빌드와 개발빌드 구분하기
+yarn build:dev
 
 yarn prettier
 yarn prettier:fix
