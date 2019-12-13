@@ -14,42 +14,46 @@ import './main.styl';
 
 // Use random nickname
 // TODO: 바꿀 수 있도록 하기
-const mynick: string = (_ => {
+const mynick /*: string */ = (_ => {
   const nicks = nickfile.split('\n').filter(n => n);
   return nicks[Math.floor(Math.random() * nicks.length)];
 })();
 
-const myid: string = UUID.create().toString();
+const myid /*: string */ = UUID.create().toString();
 
 //
 // Permalink
 //
-function getBase64Hash(): string {
+function getBase64Hash() /*: string */ {
   return Base64.decode(location.hash.slice(1));
 }
-function setBase64Hash(name: string) {
+function setBase64Hash(name /*: string */) {
   location.hash = Base64.encodeURI(name);
 }
 
 //
 // States
 //
+/*
 type Message = {
   userid: string,
   usernick: string,
   txt: string,
 };
 type Channel = Map<string, Message>;
-const new_channel = (): Channel => new Map();
+*/
+const new_channel = () /*: Channel */ => new Map();
 
+/*
 type State = {
   channels: {[name: string]: Channel},
   current_channel: string,
   editing: ?string,
 };
-const init: State = (_ => {
+*/
+const init /*: State */ = (_ => {
   // Accept permalink
-  const channels: Object = ['general', 'random', 'notice']
+  const channels /*: Object */ = ['general', 'random', 'notice']
     .map(k => ({[k]: new_channel()}))
     .reduce((l, r) => Object.assign(l, r));
 
@@ -64,6 +68,7 @@ const init: State = (_ => {
   return {channels, current_channel: init, editing: null};
 })();
 
+/*
 type Action = {
   type:
     | 'CreateMsg'
@@ -80,8 +85,12 @@ type Action = {
   msg_txt?: string, // Used with: UpdateMsg
 };
 type Dispatch = (action: Action) => Action;
+*/
 
-const reducer = (state: State = init, action: Action): State => {
+const reducer = (
+  state /*: State */ = init,
+  action /*: Action */
+) /*: State */ => {
   const {channel: ch, msg, msg_id, msg_txt} = action;
   switch (action.type) {
     case 'CreateMsg': {
@@ -175,6 +184,7 @@ const reducer = (state: State = init, action: Action): State => {
 //
 // View
 //
+/*
 type Props = {
   state: State,
   createMsg: (channel: string, msg_txt: string) => Action,
@@ -185,6 +195,7 @@ type Props = {
   createChannel: (channel: string) => Action,
   changeChannel: (channel: string) => Action,
 };
+*/
 
 const ChannelView = (() => {
   let elem, editingElm;
@@ -204,14 +215,14 @@ const ChannelView = (() => {
       }
     },
     render() {
-      const p: Props = this.props;
+      const p /*: Props */ = this.props;
       const {current_channel: ch, editing} = p.state;
       const channel = p.state.channels[ch];
 
       const lines = [];
       for (const [id, {userid, usernick, txt}] of channel) {
-        const is_editable: boolean = userid.localeCompare(myid) === 0;
-        const is_editing: boolean =
+        const is_editable /*: boolean */ = userid.localeCompare(myid) === 0;
+        const is_editing /*: boolean */ =
           editing == null || id.localeCompare(editing) !== 0;
 
         lines.push(
@@ -249,7 +260,7 @@ const ChannelView = (() => {
   });
 })();
 
-const View = (props: Props) => {
+const View = (props /*: Props */) => {
   const {state, createMsg, createChannel, changeChannel} = props;
   let field_channel, field;
 
@@ -314,11 +325,13 @@ const View = (props: Props) => {
 //
 // App
 //
+/*
 type StateProps = {state: State};
 type DispatchProps = $Diff<Props, StateProps>;
+*/
 
-const mapState = (state: State): StateProps => ({state});
-const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
+const mapState = (state /*: State */) /*: StateProps */ => ({state});
+const mapDispatch = (dispatch /*: Dispatch */) /*: DispatchProps */ => ({
   createMsg: (channel, txt) => {
     const msg_id = UUID.create().toString();
     const msg = {userid: myid, usernick: mynick, txt};
@@ -361,7 +374,7 @@ const socket = (_ => {
 })();
 
 // 주어진 action 객체를 그대로 서버에 JSON으로 전송한다.
-function sendAction(action: Action) {
+function sendAction(action /*: Action */) {
   return socket.send(JSON.stringify(action));
 }
 
