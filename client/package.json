@@ -16,7 +16,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.19",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "js-base64": "^2.1.9",
-    "normalize.css": "^4.0.0",
+    "normalize.css": "^8.0.1",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
     "react-redux": "^4.4.2",

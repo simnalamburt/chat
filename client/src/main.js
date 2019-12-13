@@ -11,7 +11,7 @@ import {faTrash} from '@fortawesome/free-solid-svg-icons/faTrash';
 
 import nickfile from './nicks.txt';
 
-import 'normalize.css/normalize.css';
+import 'normalize.css';
 import './main.scss';
 
 library.add(faPencilAlt, faTrash);
