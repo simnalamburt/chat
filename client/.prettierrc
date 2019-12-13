@@ -1,0 +1,5 @@
+singleQuote: true
+bracketSpacing: false
+jsxBracketSameLine: true
+# TODO: Typescript 붙인 뒤 쓸만한 규칙으로 바꾸기
+trailingComma: es5
