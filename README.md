@@ -7,10 +7,10 @@ Simple web-based chat app.
 # Building client-side codes
 cd client
 
-npm install   # Install dependencies
-npm run build # Build
+yarn install  # Install dependencies
+yarn build    # Build
 
-npm start     # Run webpack in watch mode
+yarn start    # Run webpack in watch mode
 ```
 ```bash
 # Running server
