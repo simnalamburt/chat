@@ -253,7 +253,7 @@ const ChannelView = (() => {
                   />
                 </span>
               ))()}
-          </li>,
+          </li>
         );
       }
       return <ul ref={n => (elem = n)}>{lines}</ul>;
@@ -357,12 +357,12 @@ const mapDispatch = (dispatch /*: Dispatch */) /*: DispatchProps */ => ({
 });
 const App = connect(
   mapState,
-  mapDispatch,
+  mapDispatch
 )(View);
 
 const store = createStore(
   reducer,
-  compose(window.devToolsExtension ? window.devToolsExtension() : f => f),
+  compose(window.devToolsExtension ? window.devToolsExtension() : f => f)
 );
 
 //
@@ -396,5 +396,5 @@ render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById('target'),
+  document.getElementById('target')
 );
