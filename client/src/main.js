@@ -254,12 +254,13 @@ const ChannelView = (() => {
             {(_ =>
               !is_editable ? null : (
                 <span className="control">
-                  <i onClick={_ => p.startEdit(id)} className="fas fa-pencil-alt" />
+                  <span onClick={_ => p.startEdit(id)}>
+                    <i className="fas fa-pencil-alt" />
+                  </span>
                   &nbsp;
-                  <i
-                    onClick={_ => p.deleteMsg(ch, id)}
-                    className="fas fa-trash"
-                  />
+                  <span onClick={_ => p.deleteMsg(ch, id)}>
+                    <i className="fas fa-trash" />
+                  </span>
                 </span>
               ))()}
           </li>
@@ -288,15 +289,17 @@ const ChannelView = (() => {
                 : ε(
                     'span',
                     {className: 'control'},
-                    ε('i', {
-                      onClick: _ => p.startEdit(id),
-                      className: 'fas fa-pencil-alt',
-                    }),
+                    ε(
+                      'span',
+                      {onClick: _ => p.startEdit(id)},
+                      ε('i', {className: 'fas fa-pencil-alt'}),
+                    ),
                     ' ',
-                    ε('i', {
-                      onClick: _ => p.deleteMsg(ch, id),
-                      className: 'fas fa-trash',
-                    }),
+                    ε(
+                      'span',
+                      {onClick: _ => p.deleteMsg(ch, id)},
+                      ε('i', {className: 'fas fa-trash'}),
+                    ),
                   ))(),
           ),
         );
