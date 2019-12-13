@@ -2,16 +2,6 @@ const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-// Always enabled plugins
-const plugs = [new ExtractTextPlugin('_bundle.css')];
-
-// Production only plugins
-const prod = [
-  new webpack.DefinePlugin({
-    'process.env': {NODE_ENV: JSON.stringify('production')},
-  }),
-];
-
 module.exports = {
   context: `${__dirname}/src`,
   entry: './main.js',
@@ -20,7 +10,7 @@ module.exports = {
     publicPath: '/build/',
     filename: '_bundle.js',
   },
-  plugins: process.env.NODE_ENV !== 'production' ? plugs : plugs.concat(prod),
+  plugins: [new ExtractTextPlugin('_bundle.css')],
   module: {
     loaders: [
       {test: /\.txt$/, loader: 'raw'},
