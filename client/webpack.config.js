@@ -23,12 +23,6 @@ module.exports = {
         test: /\.styl$/,
         loader: ExtractTextPlugin.extract('style', 'css!stylus'),
       },
-      {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        loader: 'babel',
-        query: {presets: ['es2015', 'stage-3', 'react']},
-      },
     ],
   },
 };
