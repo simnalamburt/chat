@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 import {render} from 'react-dom';
 import {createStore, compose, applyMiddleware} from 'redux';
@@ -11,6 +12,24 @@ import nickfile from './nicks.txt';
 import 'normalize.css/normalize.css';
 import 'font-awesome/css/font-awesome.css';
 import './main.styl';
+*/
+// TODO: import 문 쓰기
+const React = require('react');
+const {render} = require('react-dom');
+const {createStore, compose, applyMiddleware} = require('redux');
+const {Provider, connect} = require('react-redux');
+const UUID = require('uuid-js');
+const ReconnectingWebSocket = require('reconnectingwebsocket');
+const {Base64} = require('js-base64');
+
+const nickfile = require('./nicks.txt');
+
+require('normalize.css/normalize.css');
+require('font-awesome/css/font-awesome.css');
+require('./main.styl');
+
+// TODO: JSX 쓰기
+const ε = React.createElement;
 
 // Use random nickname
 // TODO: 바꿀 수 있도록 하기
@@ -227,6 +246,7 @@ const ChannelView = (() => {
           editing == null || id.localeCompare(editing) !== 0;
 
         lines.push(
+          /*
           <li key={id}>
             <span className="nick">{usernick}</span>
             {(_ =>
@@ -254,9 +274,47 @@ const ChannelView = (() => {
                 </span>
               ))()}
           </li>
+          */
+          // TODO: JSX 쓰기
+          ε(
+            'li',
+            {key: id},
+            ε('span', {className: 'nick'}, usernick),
+            (_ =>
+              is_editing
+                ? ε('div', {className: 'content'}, txt)
+                : ε(
+                    'form',
+                    {className: 'content', onSubmit: this.onSubmit},
+                    ε('input', {
+                      value: txt,
+                      ref: n => (editingElm = n),
+                      onBlur: p.stopEdit,
+                      onChange: _ => p.updateMsg(ch, editingElm.value, id),
+                    })
+                  ))(),
+            (_ =>
+              !is_editable
+                ? null
+                : ε(
+                    'span',
+                    {className: 'control'},
+                    ε('i', {
+                      onClick: _ => p.startEdit(id),
+                      className: 'fa fa-pencil',
+                    }),
+                    ' ',
+                    ε('i', {
+                      onClick: _ => p.deleteMsg(ch, id),
+                      className: 'fa fa-trash-o',
+                    })
+                  ))()
+          )
         );
       }
-      return <ul ref={n => (elem = n)}>{lines}</ul>;
+      // return <ul ref={n => (elem = n)}>{lines}</ul>;
+      // TODO: JSX
+      return ε('ul', {ref: n => (elem = n)}, lines);
     },
   });
 })();
@@ -288,6 +346,7 @@ const View = (props /*: Props */) => {
   };
 
   return (
+    /*
     <div id="chat">
       <div id="channels">
         <form onSubmit={onCreateChannel}>
@@ -320,6 +379,55 @@ const View = (props /*: Props */) => {
         </form>
       </div>
     </div>
+    */
+    // TODO: JSX
+    ε(
+      'div',
+      {id: 'chat'},
+      ε(
+        'div',
+        {id: 'channels'},
+        ε(
+          'form',
+          {onSubmit: onCreateChannel},
+          ε('input', {
+            className: 'field',
+            placeholder: '새 채널',
+            ref: n => (field_channel = n),
+          })
+        ),
+        ε(
+          'ul',
+          null,
+          Object.keys(state.channels).map(ch =>
+            ε(
+              'li',
+              {
+                id: ch === state.current_channel ? 'current' : null,
+                key: ch,
+                onClick: _ => changeChannel(ch),
+              },
+              ch
+            )
+          )
+        )
+      ),
+      ε(
+        'div',
+        {id: 'buffer'},
+        ε(ChannelView, props),
+        ε(
+          'form',
+          {onSubmit},
+          ε('span', null, mynick),
+          ε('input', {
+            className: 'field',
+            placeholder: '다른 동물 친구들과 이야기하세요!',
+            ref: n => (field = n),
+          })
+        )
+      )
+    )
   );
 };
 
@@ -393,8 +501,12 @@ store.subscribe(() => {
 });
 
 render(
+  /*
   <Provider store={store}>
     <App />
   </Provider>,
+  */
+  // TODO: JSX
+  ε(Provider, {store}, ε(App)),
   document.getElementById('target')
 );
