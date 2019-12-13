@@ -18,18 +18,6 @@ module.exports = {
         use: 'raw-loader',
       },
       {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: 'static/[hash].[ext]',
-              esModule: false,
-            },
-          },
-        ],
-      },
-      {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
