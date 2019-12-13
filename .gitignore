@@ -1,2 +1,4 @@
 /client/node_modules
+
+/server/.bundle
 /server/public/build
