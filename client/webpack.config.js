@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
@@ -22,7 +21,7 @@ module.exports = {
       {test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css')},
       {
         test: /\.styl$/,
-        loader: ExtractTextPlugin.extract('style', 'css!postcss!stylus'),
+        loader: ExtractTextPlugin.extract('style', 'css!stylus'),
       },
       {
         test: /\.jsx?$/,
@@ -32,5 +31,4 @@ module.exports = {
       },
     ],
   },
-  postcss: () /*: Array<Object> */ => [autoprefixer],
 };
