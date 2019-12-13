@@ -200,6 +200,7 @@ type Props = {
 const ChannelView = (() => {
   let elem, editingElm;
   return React.createClass({
+    displayName: 'ChannelView',
     componentDidUpdate(params) {
       // TODO: 남이 메세지를 보냈을때도 스크롤이 확확 올라가버리면 곤란함
       elem.scrollTop = elem.scrollHeight - elem.clientHeight;
