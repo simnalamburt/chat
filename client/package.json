@@ -9,7 +9,6 @@
     "file-loader": "^0.8.5",
     "raw-loader": "^0.5.1",
     "style-loader": "^0.13.1",
-    "stylus-loader": "^1.5.1",
     "webpack": "^1.12.14"
   },
   "dependencies": {

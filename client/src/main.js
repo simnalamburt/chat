@@ -11,7 +11,7 @@ import nickfile from './nicks.txt';
 
 import 'normalize.css/normalize.css';
 import 'font-awesome/css/font-awesome.css';
-import './main.styl';
+import './main.scss';
 */
 // TODO: import 문 쓰기
 const React = require('react');
@@ -26,7 +26,7 @@ const nickfile = require('./nicks.txt');
 
 require('normalize.css/normalize.css');
 require('font-awesome/css/font-awesome.css');
-require('./main.styl');
+require('./main.scss.css'); // TODO: SCSS 쓰기
 
 // TODO: JSX 쓰기
 const ε = React.createElement;
