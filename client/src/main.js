@@ -10,7 +10,7 @@ import nickfile from './nicks.txt';
 
 import 'normalize.css/normalize.css';
 import 'font-awesome/css/font-awesome.css';
-import './main.scss.css'; // TODO: SCSS 쓰기
+import './main.scss';
 
 // TODO: JSX 쓰기
 const ε = React.createElement;
