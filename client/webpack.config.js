@@ -5,7 +5,7 @@ const webpack = require('webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
-  entry: './src/main.js',
+  entry: './src/main.tsx',
   output: {
     path: path.resolve(__dirname, '../server/public/build'),
     publicPath: '/build/',
@@ -13,6 +13,11 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
       {
         test: /\.txt$/,
         use: 'raw-loader',

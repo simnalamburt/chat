@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { createStore, compose, applyMiddleware } from 'redux'
+import { createStore } from 'redux'
 import { Provider, connect } from 'react-redux'
 import uuidv4 from 'uuid/v4'
 import ReconnectingWebSocket from 'reconnectingwebsocket'
@@ -22,46 +22,42 @@ const ε = React.createElement
 
 // Use random nickname
 // TODO: 바꿀 수 있도록 하기
-const mynick /*: string */ = (_ => {
+const mynick: string = (_ => {
   const nicks = nickfile.split('\n').filter(n => n)
   return nicks[Math.floor(Math.random() * nicks.length)]
 })()
 
-const myid /*: string */ = uuidv4()
+const myid: string = uuidv4()
 
 //
 // Permalink
 //
-function getBase64Hash() /*: string */ {
+function getBase64Hash(): string {
   return Base64.decode(location.hash.slice(1))
 }
-function setBase64Hash(name /*: string */) {
+function setBase64Hash(name: string) {
   location.hash = Base64.encodeURI(name)
 }
 
 //
 // States
 //
-/*
 type Message = {
-  userid: string,
-  usernick: string,
-  txt: string,
-};
-type Channel = Map<string, Message>;
-*/
-const new_channel = () /*: Channel */ => new Map()
+  userid: string
+  usernick: string
+  txt: string
+}
+type Channel = Map<string, Message>
+const new_channel = (): Channel => new Map()
 
-/*
 type State = {
-  channels: {[name: string]: Channel},
-  current_channel: string,
-  editing: ?string,
-};
-*/
-const init /*: State */ = (_ => {
+  channels: { [name: string]: Channel }
+  current_channel: string
+  editing: string | null
+}
+const init: State = (_ => {
   // Accept permalink
-  const channels /*: Object */ = ['general', 'random', 'notice']
+  const channels   = ['general', 'random', 'notice']
     .map(k => ({ [k]: new_channel() }))
     .reduce((l, r) => Object.assign(l, r))
 
@@ -76,7 +72,6 @@ const init /*: State */ = (_ => {
   return { channels, current_channel: init, editing: null }
 })()
 
-/*
 type Action = {
   type:
     | 'CreateMsg'
@@ -85,17 +80,16 @@ type Action = {
     | 'StartEdit'
     | 'StopEdit'
     | 'CreateChannel'
-    | 'ChangeChannel',
+    | 'ChangeChannel'
 
-  channel?: string, // Used with: UpdateMsg | DeleteMsg | CreateChannel | ChangeChannel
-  msg?: Message, // Used with: CreateMsg
-  msg_id?: string, // Used with: CreateMsg | UpdateMsg | DeleteMsg | StartEdit
-  msg_txt?: string, // Used with: UpdateMsg
-};
-type Dispatch = (action: Action) => Action;
-*/
+  channel?: string // Used with: UpdateMsg | DeleteMsg | CreateChannel | ChangeChannel
+  msg?: Message // Used with: CreateMsg
+  msg_id?: string // Used with: CreateMsg | UpdateMsg | DeleteMsg | StartEdit
+  msg_txt?: string // Used with: UpdateMsg
+}
+type Dispatch = (action: Action) => Action
 
-const reducer = (state /*: State */ = init, action /*: Action */) /*: State */ => {
+const reducer = (state: State = init, action: Action): State => {
   const { channel: ch, msg, msg_id, msg_txt } = action
   switch (action.type) {
     case 'CreateMsg': {
@@ -130,8 +124,7 @@ const reducer = (state /*: State */ = init, action /*: Action */) /*: State */ =
       }
 
       const next = Object.assign({}, state)
-      // $FlowIssue: The result of `.get(msg_id)` cannot be `undefined`
-      next.channels[ch].get(msg_id).txt = msg_txt
+      next.channels[ch].get(msg_id)!.txt = msg_txt
       return next
     }
     case 'DeleteMsg': {
@@ -189,21 +182,23 @@ const reducer = (state /*: State */ = init, action /*: Action */) /*: State */ =
 //
 // View
 //
-/*
 type Props = {
-  state: State,
-  createMsg: (channel: string, msg_txt: string) => Action,
-  updateMsg: (channel: string, msg_txt: string, msg_id: string) => Action,
-  deleteMsg: (channel: string, msg_id: string) => Action,
-  startEdit: (msg_id: string) => Action,
-  stopEdit: () => Action,
-  createChannel: (channel: string) => Action,
-  changeChannel: (channel: string) => Action,
-};
-*/
+  state: State
+  createMsg: (channel: string, msg_txt: string) => Action
+  updateMsg: (channel: string, msg_txt: string, msg_id: string) => Action
+  deleteMsg: (channel: string, msg_id: string) => Action
+  startEdit: (msg_id: string) => Action
+  stopEdit: () => Action
+  createChannel: (channel: string) => Action
+  changeChannel: (channel: string) => Action
+}
 
-class ChannelView extends React.Component {
-  constructor(props) {
+class ChannelView extends React.Component<Props> {
+  elem: React.RefObject<HTMLUListElement>
+  elemEdit: React.RefObject<HTMLInputElement>
+  onSubmit: (e: React.FormEvent) => void
+
+  constructor(props: Props) {
     super(props)
 
     this.elem = React.createRef()
@@ -221,8 +216,10 @@ class ChannelView extends React.Component {
 
   componentDidUpdate() {
     const node = this.elem.current
-    // TODO: 남이 메세지를 보냈을때도 스크롤이 확확 올라가버리면 곤란함
-    node.scrollTop = node.scrollHeight - node.clientHeight
+    if (node != null) {
+      // TODO: 남이 메세지를 보냈을때도 스크롤이 확확 올라가버리면 곤란함
+      node.scrollTop = node.scrollHeight - node.clientHeight
+    }
 
     const nodeEdit = this.elemEdit.current
     if (nodeEdit != null) {
@@ -231,14 +228,14 @@ class ChannelView extends React.Component {
   }
 
   render() {
-    const p /*: Props */ = this.props
+    const p: Props = this.props
     const { current_channel: ch, editing } = p.state
     const channel = p.state.channels[ch]
 
     const lines = []
     for (const [id, { userid, usernick, txt }] of channel) {
-      const is_editable /*: boolean */ = userid.localeCompare(myid) === 0
-      const is_editing /*: boolean */ = editing == null || id.localeCompare(editing) !== 0
+      const is_editable : boolean  = userid.localeCompare(myid) === 0
+      const is_editing : boolean  = editing == null || id.localeCompare(editing) !== 0
 
       lines.push(
         /*
@@ -286,7 +283,7 @@ class ChannelView extends React.Component {
                     value: txt,
                     ref: this.elemEdit,
                     onBlur: p.stopEdit,
-                    onChange: _ => p.updateMsg(ch, this.elemEdit.current.value, id),
+                    onChange: _ => p.updateMsg(ch, this.elemEdit.current!.value, id),
                   })
                 ))(),
           (_ =>
@@ -297,13 +294,13 @@ class ChannelView extends React.Component {
                   { className: 'control' },
                   ε(
                     'span',
-                    { onClick: _ => p.startEdit(id) },
+                    { onClick: (_: React.FormEvent) => p.startEdit(id) },
                     ε('i', { className: 'fas fa-pencil-alt' })
                   ),
                   ' ',
                   ε(
                     'span',
-                    { onClick: _ => p.deleteMsg(ch, id) },
+                    { onClick: (_: React.FormEvent) => p.deleteMsg(ch, id) },
                     ε('i', { className: 'fas fa-trash' })
                   )
                 ))()
@@ -316,13 +313,16 @@ class ChannelView extends React.Component {
   }
 }
 
-const View = (props /*: Props */) => {
+const View = (props: Props) => {
   const { state, createMsg, createChannel, changeChannel } = props
-  let field_channel, field
 
-  const onSubmit = e => {
+  // TODO: Callback ref 대신 createRef() 쓰기
+  let field_channel: HTMLInputElement | null
+  let field: HTMLInputElement | null
+
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!field.value) {
+    if (!field?.value) {
       return
     }
 
@@ -330,14 +330,14 @@ const View = (props /*: Props */) => {
     field.value = ''
   }
 
-  const onCreateChannel = e => {
+  const onCreateChannel = (e: React.FormEvent) => {
     e.preventDefault()
-    const ch = field_channel.value
-    if (!ch) {
+    if (!field_channel?.value) {
       return
     }
-    field_channel.value = ''
 
+    let ch = field_channel?.value
+    field_channel.value = ''
     createChannel(ch)
     changeChannel(ch)
   }
@@ -431,27 +431,33 @@ const View = (props /*: Props */) => {
 //
 // App
 //
-/*
 type StateProps = {state: State};
-type DispatchProps = $Diff<Props, StateProps>;
-*/
+type DispatchProps = {
+  createMsg: (channel: string, msg_txt: string) => Action
+  updateMsg: (channel: string, msg_txt: string, msg_id: string) => Action
+  deleteMsg: (channel: string, msg_id: string) => Action
+  startEdit: (msg_id: string) => Action
+  stopEdit: () => Action
+  createChannel: (channel: string) => Action
+  changeChannel: (channel: string) => Action
+}
 
-const mapState = (state /*: State */) /*: StateProps */ => ({ state })
-const mapDispatch = (dispatch /*: Dispatch */) /*: DispatchProps */ => ({
+const mapState = (state: State): StateProps=> ({ state })
+const mapDispatch = (dispatch : Dispatch ) : DispatchProps  => ({
   createMsg: (channel, txt) => {
     const msg_id = uuidv4()
     const msg = { userid: myid, usernick: mynick, txt }
-    const action = { type: 'CreateMsg', channel, msg, msg_id }
+    const action: Action = { type: 'CreateMsg', channel, msg, msg_id }
     sendAction(action)
     return dispatch(action)
   },
   updateMsg: (channel, msg_txt, msg_id) => {
-    const action = { type: 'UpdateMsg', channel, msg_txt, msg_id }
+    const action: Action = { type: 'UpdateMsg', channel, msg_txt, msg_id }
     sendAction(action)
     return dispatch(action)
   },
   deleteMsg: (channel, msg_id) => {
-    const action = { type: 'DeleteMsg', channel, msg_id }
+    const action: Action = { type: 'DeleteMsg', channel, msg_id }
     sendAction(action)
     return dispatch(action)
   },
@@ -462,10 +468,7 @@ const mapDispatch = (dispatch /*: Dispatch */) /*: DispatchProps */ => ({
 })
 const App = connect(mapState, mapDispatch)(View)
 
-const store = createStore(
-  reducer,
-  compose(window.devToolsExtension ? window.devToolsExtension() : f => f)
-)
+const store = createStore(reducer)
 
 //
 // Communication
@@ -477,7 +480,7 @@ const socket = (_ => {
 })()
 
 // 주어진 action 객체를 그대로 서버에 JSON으로 전송한다.
-function sendAction(action /*: Action */) {
+function sendAction(action: Action) {
   return socket.send(JSON.stringify(action))
 }
 
