@@ -14,7 +14,8 @@
     "webpack-cli": "^3"
   },
   "dependencies": {
-    "font-awesome": "^4.5.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.19",
+    "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "js-base64": "^2.1.9",
     "normalize.css": "^4.0.0",
     "react": "^15.0.1",

@@ -5,12 +5,17 @@ import {Provider, connect} from 'react-redux';
 import UUID from 'uuid-js';
 import ReconnectingWebSocket from 'reconnectingwebsocket';
 import {Base64} from 'js-base64';
+import {library, dom} from '@fortawesome/fontawesome-svg-core';
+import {faPencilAlt} from '@fortawesome/free-solid-svg-icons/faPencilAlt';
+import {faTrash} from '@fortawesome/free-solid-svg-icons/faTrash';
 
 import nickfile from './nicks.txt';
 
 import 'normalize.css/normalize.css';
-import 'font-awesome/css/font-awesome.css';
 import './main.scss';
+
+library.add(faPencilAlt, faTrash);
+dom.watch();
 
 // TODO: JSX 쓰기
 const ε = React.createElement;
@@ -249,11 +254,11 @@ const ChannelView = (() => {
             {(_ =>
               !is_editable ? null : (
                 <span className="control">
-                  <i onClick={_ => p.startEdit(id)} className="fa fa-pencil" />
+                  <i onClick={_ => p.startEdit(id)} className="fas fa-pencil-alt" />
                   &nbsp;
                   <i
                     onClick={_ => p.deleteMsg(ch, id)}
-                    className="fa fa-trash-o"
+                    className="fas fa-trash"
                   />
                 </span>
               ))()}
@@ -285,12 +290,12 @@ const ChannelView = (() => {
                     {className: 'control'},
                     ε('i', {
                       onClick: _ => p.startEdit(id),
-                      className: 'fa fa-pencil',
+                      className: 'fas fa-pencil-alt',
                     }),
                     ' ',
                     ε('i', {
                       onClick: _ => p.deleteMsg(ch, id),
-                      className: 'fa fa-trash-o',
+                      className: 'fas fa-trash',
                     }),
                   ))(),
           ),
