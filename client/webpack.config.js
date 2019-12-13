@@ -20,7 +20,6 @@ module.exports = {
     publicPath: '/build/',
     filename: '_bundle.js',
   },
-  devtool: 'source-map',
   plugins: process.env.NODE_ENV !== 'production' ? plugs : plugs.concat(prod),
   module: {
     loaders: [
