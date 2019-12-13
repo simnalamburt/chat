@@ -205,111 +205,121 @@ type Props = {
 };
 */
 
-const ChannelView = (() => {
-  let elem, editingElm;
-  return React.createClass({
-    displayName: 'ChannelView',
-    componentDidUpdate(params) {
-      // TODO: 남이 메세지를 보냈을때도 스크롤이 확확 올라가버리면 곤란함
-      elem.scrollTop = elem.scrollHeight - elem.clientHeight;
+class ChannelView extends React.Component {
+  constructor(props) {
+    super(props);
 
-      if (editingElm != null) {
-        editingElm.focus();
-      }
-    },
-    onSubmit(e) {
+    this.elem = React.createRef();
+    this.elemEdit = React.createRef();
+
+    this.onSubmit = e => {
       e.preventDefault();
-      if (editingElm != null) {
-        editingElm.blur();
+
+      const node = this.elemEdit.current;
+      if (node != null) {
+        node.blur();
       }
-    },
-    render() {
-      const p /*: Props */ = this.props;
-      const {current_channel: ch, editing} = p.state;
-      const channel = p.state.channels[ch];
+    };
+  }
 
-      const lines = [];
-      for (const [id, {userid, usernick, txt}] of channel) {
-        const is_editable /*: boolean */ = userid.localeCompare(myid) === 0;
-        const is_editing /*: boolean */ =
-          editing == null || id.localeCompare(editing) !== 0;
+  componentDidUpdate() {
+    const node = this.elem.current;
+    // TODO: 남이 메세지를 보냈을때도 스크롤이 확확 올라가버리면 곤란함
+    node.scrollTop = node.scrollHeight - node.clientHeight;
 
-        lines.push(
-          /*
-          <li key={id}>
-            <span className="nick">{usernick}</span>
-            {(_ =>
-              is_editing ? (
-                <div className="content">{txt}</div>
-              ) : (
-                <form className="content" onSubmit={this.onSubmit}>
-                  <input
-                    value={txt}
-                    ref={n => (editingElm = n)}
-                    onBlur={p.stopEdit}
-                    onChange={_ => p.updateMsg(ch, editingElm.value, id)}
-                  />
-                </form>
-              ))()}
-            {(_ =>
-              !is_editable ? null : (
-                <span className="control">
-                  <span onClick={_ => p.startEdit(id)}>
-                    <i className="fas fa-pencil-alt" />
-                  </span>
-                  &nbsp;
-                  <span onClick={_ => p.deleteMsg(ch, id)}>
-                    <i className="fas fa-trash" />
-                  </span>
+    const nodeEdit = this.elemEdit.current;
+    if (nodeEdit != null) {
+      nodeEdit.focus();
+    }
+  }
+
+  render() {
+    const p /*: Props */ = this.props;
+    const {current_channel: ch, editing} = p.state;
+    const channel = p.state.channels[ch];
+
+    const lines = [];
+    for (const [id, {userid, usernick, txt}] of channel) {
+      const is_editable /*: boolean */ = userid.localeCompare(myid) === 0;
+      const is_editing /*: boolean */ =
+        editing == null || id.localeCompare(editing) !== 0;
+
+      lines.push(
+        /*
+        <li key={id}>
+          <span className="nick">{usernick}</span>
+          {(_ =>
+            is_editing ? (
+              <div className="content">{txt}</div>
+            ) : (
+              <form className="content" onSubmit={this.onSubmit}>
+                <input
+                  value={txt}
+                  ref={this.elemEdit}
+                  onBlur={p.stopEdit}
+                  onChange={_ => p.updateMsg(ch, this.elemEdit.current.value, id)}
+                />
+              </form>
+            ))()}
+          {(_ =>
+            !is_editable ? null : (
+              <span className="control">
+                <span onClick={_ => p.startEdit(id)}>
+                  <i className="fas fa-pencil-alt" />
                 </span>
-              ))()}
-          </li>
-          */
-          // TODO: JSX 쓰기
-          ε(
-            'li',
-            {key: id},
-            ε('span', {className: 'nick'}, usernick),
-            (_ =>
-              is_editing
-                ? ε('div', {className: 'content'}, txt)
-                : ε(
-                    'form',
-                    {className: 'content', onSubmit: this.onSubmit},
-                    ε('input', {
-                      value: txt,
-                      ref: n => (editingElm = n),
-                      onBlur: p.stopEdit,
-                      onChange: _ => p.updateMsg(ch, editingElm.value, id),
-                    }),
-                  ))(),
-            (_ =>
-              !is_editable
-                ? null
-                : ε(
+                &nbsp;
+                <span onClick={_ => p.deleteMsg(ch, id)}>
+                  <i className="fas fa-trash" />
+                </span>
+              </span>
+            ))()}
+        </li>
+        */
+        // TODO: JSX 쓰기
+        ε(
+          'li',
+          {key: id},
+          ε('span', {className: 'nick'}, usernick),
+          (_ =>
+            is_editing
+              ? ε('div', {className: 'content'}, txt)
+              : ε(
+                  'form',
+                  {className: 'content', onSubmit: this.onSubmit},
+                  ε('input', {
+                    value: txt,
+                    ref: this.elemEdit,
+                    onBlur: p.stopEdit,
+                    onChange: _ =>
+                      p.updateMsg(ch, this.elemEdit.current.value, id),
+                  }),
+                ))(),
+          (_ =>
+            !is_editable
+              ? null
+              : ε(
+                  'span',
+                  {className: 'control'},
+                  ε(
                     'span',
-                    {className: 'control'},
-                    ε(
-                      'span',
-                      {onClick: _ => p.startEdit(id)},
-                      ε('i', {className: 'fas fa-pencil-alt'}),
-                    ),
-                    ' ',
-                    ε(
-                      'span',
-                      {onClick: _ => p.deleteMsg(ch, id)},
-                      ε('i', {className: 'fas fa-trash'}),
-                    ),
-                  ))(),
-          ),
-        );
-      }
-      // return <ul ref={n => (elem = n)}>{lines}</ul>;
-      // TODO: JSX
-      return ε('ul', {ref: n => (elem = n)}, lines);
-    },
-  });
-})();
+                    {onClick: _ => p.startEdit(id)},
+                    ε('i', {className: 'fas fa-pencil-alt'}),
+                  ),
+                  ' ',
+                  ε(
+                    'span',
+                    {onClick: _ => p.deleteMsg(ch, id)},
+                    ε('i', {className: 'fas fa-trash'}),
+                  ),
+                ))(),
+        ),
+      );
+    }
+    // return <ul ref={this.elem}>{lines}</ul>;
+    // TODO: JSX
+    return ε('ul', {ref: this.elem}, lines);
+  }
+}
 
 const View = (props /*: Props */) => {
   const {state, createMsg, createChannel, changeChannel} = props;
