@@ -17,9 +17,6 @@ import './main.scss'
 library.add(faPencilAlt, faTrash)
 dom.watch()
 
-// TODO: JSX 쓰기
-const ε = React.createElement
-
 // Use random nickname
 // TODO: 바꿀 수 있도록 하기
 const mynick: string = (_ => {
@@ -53,11 +50,11 @@ const new_channel = (): Channel => new Map()
 type State = {
   channels: { [name: string]: Channel }
   current_channel: string
-  editing: string | null
+  editing?: string
 }
 const init: State = (_ => {
   // Accept permalink
-  const channels   = ['general', 'random', 'notice']
+  const channels = ['general', 'random', 'notice']
     .map(k => ({ [k]: new_channel() }))
     .reduce((l, r) => Object.assign(l, r))
 
@@ -69,7 +66,7 @@ const init: State = (_ => {
     channels[init] = new_channel()
   }
 
-  return { channels, current_channel: init, editing: null }
+  return { channels, current_channel: init, editing: undefined }
 })()
 
 type Action = {
@@ -153,7 +150,7 @@ const reducer = (state: State = init, action: Action): State => {
     }
     case 'StopEdit': {
       const { channels, current_channel } = state
-      return { channels, current_channel, editing: null }
+      return { channels, current_channel, editing: undefined }
     }
     case 'CreateChannel': {
       // Validation
@@ -172,7 +169,7 @@ const reducer = (state: State = init, action: Action): State => {
       }
 
       const { channels } = state
-      return { channels, current_channel: ch, editing: null }
+      return { channels, current_channel: ch, editing: undefined }
     }
     default:
       return state
@@ -234,11 +231,10 @@ class ChannelView extends React.Component<Props> {
 
     const lines = []
     for (const [id, { userid, usernick, txt }] of channel) {
-      const is_editable : boolean  = userid.localeCompare(myid) === 0
-      const is_editing : boolean  = editing == null || id.localeCompare(editing) !== 0
+      const is_editable: boolean = userid.localeCompare(myid) === 0
+      const is_editing: boolean = editing == null || id.localeCompare(editing) !== 0
 
       lines.push(
-        /*
         <li key={id}>
           <span className="nick">{usernick}</span>
           {(_ =>
@@ -250,7 +246,7 @@ class ChannelView extends React.Component<Props> {
                   value={txt}
                   ref={this.elemEdit}
                   onBlur={p.stopEdit}
-                  onChange={_ => p.updateMsg(ch, this.elemEdit.current.value, id)}
+                  onChange={_ => p.updateMsg(ch, this.elemEdit.current!.value, id)}
                 />
               </form>
             ))()}
@@ -267,98 +263,53 @@ class ChannelView extends React.Component<Props> {
               </span>
             ))()}
         </li>
-        */
-        // TODO: JSX 쓰기
-        ε(
-          'li',
-          { key: id },
-          ε('span', { className: 'nick' }, usernick),
-          (_ =>
-            is_editing
-              ? ε('div', { className: 'content' }, txt)
-              : ε(
-                  'form',
-                  { className: 'content', onSubmit: this.onSubmit },
-                  ε('input', {
-                    value: txt,
-                    ref: this.elemEdit,
-                    onBlur: p.stopEdit,
-                    onChange: _ => p.updateMsg(ch, this.elemEdit.current!.value, id),
-                  })
-                ))(),
-          (_ =>
-            !is_editable
-              ? null
-              : ε(
-                  'span',
-                  { className: 'control' },
-                  ε(
-                    'span',
-                    { onClick: (_: React.FormEvent) => p.startEdit(id) },
-                    ε('i', { className: 'fas fa-pencil-alt' })
-                  ),
-                  ' ',
-                  ε(
-                    'span',
-                    { onClick: (_: React.FormEvent) => p.deleteMsg(ch, id) },
-                    ε('i', { className: 'fas fa-trash' })
-                  )
-                ))()
-        )
       )
     }
-    // return <ul ref={this.elem}>{lines}</ul>;
-    // TODO: JSX
-    return ε('ul', { ref: this.elem }, lines)
+    return <ul ref={this.elem}>{lines}</ul>
   }
 }
 
 const View = (props: Props) => {
   const { state, createMsg, createChannel, changeChannel } = props
 
-  // TODO: Callback ref 대신 createRef() 쓰기
-  let field_channel: HTMLInputElement | null
-  let field: HTMLInputElement | null
+  let field = React.createRef<HTMLInputElement>()
+  let field_channel = React.createRef<HTMLInputElement>()
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!field?.value) {
+    if (!field.current?.value) {
       return
     }
 
-    createMsg(state.current_channel, field.value)
-    field.value = ''
+    createMsg(state.current_channel, field.current.value)
+    field.current.value = ''
   }
 
   const onCreateChannel = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!field_channel?.value) {
+    if (!field_channel.current?.value) {
       return
     }
 
-    let ch = field_channel?.value
-    field_channel.value = ''
+    let ch = field_channel.current.value
+    field_channel.current.value = ''
     createChannel(ch)
     changeChannel(ch)
   }
 
   return (
-    /*
     <div id="chat">
       <div id="channels">
         <form onSubmit={onCreateChannel}>
-          <input
-            className="field"
-            placeholder="새 채널"
-            ref={n => (field_channel = n)}
-          />
+          <input className="field" placeholder="새 채널" ref={field_channel} />
         </form>
         <ul>
           {Object.keys(state.channels).map(ch => (
             <li
-              id={ch === state.current_channel ? 'current' : null}
+              id={ch === state.current_channel ? 'current' : undefined}
               key={ch}
-              onClick={_ => changeChannel(ch)}>
+              onClick={_ => changeChannel(ch)}
+            >
               {ch}
             </li>
           ))}
@@ -368,70 +319,17 @@ const View = (props: Props) => {
         <ChannelView {...props} />
         <form onSubmit={onSubmit}>
           <span>{mynick}</span>
-          <input
-            className="field"
-            placeholder="다른 동물 친구들과 이야기하세요!"
-            ref={n => (field = n)}
-          />
+          <input className="field" placeholder="다른 동물 친구들과 이야기하세요!" ref={field} />
         </form>
       </div>
     </div>
-    */
-    // TODO: JSX
-    ε(
-      'div',
-      { id: 'chat' },
-      ε(
-        'div',
-        { id: 'channels' },
-        ε(
-          'form',
-          { onSubmit: onCreateChannel },
-          ε('input', {
-            className: 'field',
-            placeholder: '새 채널',
-            ref: n => (field_channel = n),
-          })
-        ),
-        ε(
-          'ul',
-          null,
-          Object.keys(state.channels).map(ch =>
-            ε(
-              'li',
-              {
-                id: ch === state.current_channel ? 'current' : null,
-                key: ch,
-                onClick: _ => changeChannel(ch),
-              },
-              ch
-            )
-          )
-        )
-      ),
-      ε(
-        'div',
-        { id: 'buffer' },
-        ε(ChannelView, props),
-        ε(
-          'form',
-          { onSubmit },
-          ε('span', null, mynick),
-          ε('input', {
-            className: 'field',
-            placeholder: '다른 동물 친구들과 이야기하세요!',
-            ref: n => (field = n),
-          })
-        )
-      )
-    )
   )
 }
 
 //
 // App
 //
-type StateProps = {state: State};
+type StateProps = { state: State }
 type DispatchProps = {
   createMsg: (channel: string, msg_txt: string) => Action
   updateMsg: (channel: string, msg_txt: string, msg_id: string) => Action
@@ -442,8 +340,8 @@ type DispatchProps = {
   changeChannel: (channel: string) => Action
 }
 
-const mapState = (state: State): StateProps=> ({ state })
-const mapDispatch = (dispatch : Dispatch ) : DispatchProps  => ({
+const mapState = (state: State): StateProps => ({ state })
+const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
   createMsg: (channel, txt) => {
     const msg_id = uuidv4()
     const msg = { userid: myid, usernick: mynick, txt }
@@ -498,12 +396,8 @@ store.subscribe(() => {
 })
 
 render(
-  /*
   <Provider store={store}>
     <App />
   </Provider>,
-  */
-  // TODO: JSX
-  ε(Provider, { store }, ε(App)),
   document.getElementById('target')
 )
