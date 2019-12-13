@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 import {createStore, compose, applyMiddleware} from 'redux';
 import {Provider, connect} from 'react-redux';
-import UUID from 'uuid-js';
+import uuidv4 from 'uuid/v4';
 import ReconnectingWebSocket from 'reconnectingwebsocket';
 import {Base64} from 'js-base64';
 import {library, dom} from '@fortawesome/fontawesome-svg-core';
@@ -27,7 +27,7 @@ const mynick /*: string */ = (_ => {
   return nicks[Math.floor(Math.random() * nicks.length)];
 })();
 
-const myid /*: string */ = UUID.create().toString();
+const myid /*: string */ = uuidv4();
 
 //
 // Permalink
@@ -431,7 +431,7 @@ type DispatchProps = $Diff<Props, StateProps>;
 const mapState = (state /*: State */) /*: StateProps */ => ({state});
 const mapDispatch = (dispatch /*: Dispatch */) /*: DispatchProps */ => ({
   createMsg: (channel, txt) => {
-    const msg_id = UUID.create().toString();
+    const msg_id = uuidv4();
     const msg = {userid: myid, usernick: mynick, txt};
     const action = {type: 'CreateMsg', channel, msg, msg_id};
     sendAction(action);
