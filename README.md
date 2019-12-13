@@ -7,10 +7,12 @@ Simple web-based chat app.
 # Building client-side codes
 cd client
 
-yarn install  # Install dependencies
-yarn build    # Build
-
+yarn
+yarn build
 # TODO: 프로덕션 빌드와 개발빌드 구분하기
+
+# TODO: yarn prettier, yarn prettier:fix 만들기
+# TODO: .prettierrc 만들기
 ```
 ```bash
 # Running server

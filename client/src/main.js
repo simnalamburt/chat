@@ -92,7 +92,7 @@ type Dispatch = (action: Action) => Action;
 
 const reducer = (
   state /*: State */ = init,
-  action /*: Action */
+  action /*: Action */,
 ) /*: State */ => {
   const {channel: ch, msg, msg_id, msg_txt} = action;
   switch (action.type) {
@@ -275,7 +275,7 @@ const ChannelView = (() => {
                       ref: n => (editingElm = n),
                       onBlur: p.stopEdit,
                       onChange: _ => p.updateMsg(ch, editingElm.value, id),
-                    })
+                    }),
                   ))(),
             (_ =>
               !is_editable
@@ -291,9 +291,9 @@ const ChannelView = (() => {
                     ε('i', {
                       onClick: _ => p.deleteMsg(ch, id),
                       className: 'fa fa-trash-o',
-                    })
-                  ))()
-          )
+                    }),
+                  ))(),
+          ),
         );
       }
       // return <ul ref={n => (elem = n)}>{lines}</ul>;
@@ -378,7 +378,7 @@ const View = (props /*: Props */) => {
             className: 'field',
             placeholder: '새 채널',
             ref: n => (field_channel = n),
-          })
+          }),
         ),
         ε(
           'ul',
@@ -391,10 +391,10 @@ const View = (props /*: Props */) => {
                 key: ch,
                 onClick: _ => changeChannel(ch),
               },
-              ch
-            )
-          )
-        )
+              ch,
+            ),
+          ),
+        ),
       ),
       ε(
         'div',
@@ -408,9 +408,9 @@ const View = (props /*: Props */) => {
             className: 'field',
             placeholder: '다른 동물 친구들과 이야기하세요!',
             ref: n => (field = n),
-          })
-        )
-      )
+          }),
+        ),
+      ),
     )
   );
 };
@@ -449,12 +449,12 @@ const mapDispatch = (dispatch /*: Dispatch */) /*: DispatchProps */ => ({
 });
 const App = connect(
   mapState,
-  mapDispatch
+  mapDispatch,
 )(View);
 
 const store = createStore(
   reducer,
-  compose(window.devToolsExtension ? window.devToolsExtension() : f => f)
+  compose(window.devToolsExtension ? window.devToolsExtension() : f => f),
 );
 
 //
@@ -492,5 +492,5 @@ render(
   */
   // TODO: JSX
   ε(Provider, {store}, ε(App)),
-  document.getElementById('target')
+  document.getElementById('target'),
 );
