@@ -1,4 +1,3 @@
-/*
 import React from 'react';
 import {render} from 'react-dom';
 import {createStore, compose, applyMiddleware} from 'redux';
@@ -11,22 +10,7 @@ import nickfile from './nicks.txt';
 
 import 'normalize.css/normalize.css';
 import 'font-awesome/css/font-awesome.css';
-import './main.scss';
-*/
-// TODO: import 문 쓰기
-const React = require('react');
-const {render} = require('react-dom');
-const {createStore, compose, applyMiddleware} = require('redux');
-const {Provider, connect} = require('react-redux');
-const UUID = require('uuid-js');
-const ReconnectingWebSocket = require('reconnectingwebsocket');
-const {Base64} = require('js-base64');
-
-const nickfile = require('./nicks.txt').default;
-
-require('normalize.css/normalize.css');
-require('font-awesome/css/font-awesome.css');
-require('./main.scss.css'); // TODO: SCSS 쓰기
+import './main.scss.css'; // TODO: SCSS 쓰기
 
 // TODO: JSX 쓰기
 const ε = React.createElement;
