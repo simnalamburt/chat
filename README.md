@@ -8,8 +8,7 @@ Simple web-based chat app.
 cd client
 
 npm install   # Install dependencies
-npm test      # Static type checking (flow)
-npm run build # Build everything     (flow + webpack)
+npm run build # Build
 
 npm start     # Run webpack in watch mode
 ```
