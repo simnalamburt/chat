@@ -1,11 +1,14 @@
 {
   "scripts": {
-    "build": "webpack-cli --mode=development"
+    "build": "webpack-cli --mode=development",
+    "prettier": "prettier --check '**/*.{json,js,scss}'",
+    "prettier:fix": "prettier --write '**/*.{json,js,scss}'"
   },
   "devDependencies": {
     "css-loader": "^3",
     "fibers": "^4.0.2",
     "mini-css-extract-plugin": "^0.8.0",
+    "prettier": "^1.19.1",
     "raw-loader": "^4",
     "sass": "^1.23.7",
     "sass-loader": "^8.0.0",

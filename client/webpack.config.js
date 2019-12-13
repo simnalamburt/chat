@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 
-const path = require('path');
-const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path')
+const webpack = require('webpack')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   entry: './src/main.js',
@@ -33,4 +33,4 @@ module.exports = {
       filename: '_bundle.css',
     }),
   ],
-};
+}
