@@ -9,6 +9,8 @@ cd client
 
 yarn install  # Install dependencies
 yarn build    # Build
+
+# TODO: 프로덕션 빌드와 개발빌드 구분하기
 ```
 ```bash
 # Running server

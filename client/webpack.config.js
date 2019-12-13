@@ -1,24 +1,43 @@
+'use strict';
+
+const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  context: `${__dirname}/src`,
-  entry: './main.js',
+  entry: './src/main.js',
   output: {
-    path: `${__dirname}/../server/public/build`,
+    path: path.resolve(__dirname, '../server/public/build'),
     publicPath: '/build/',
     filename: '_bundle.js',
   },
-  plugins: [new ExtractTextPlugin('_bundle.css')],
   module: {
-    loaders: [
-      {test: /\.txt$/, loader: 'raw'},
-      {test: /\.png$/, loader: 'file?name=static/[hash].[ext]'},
+    rules: [
+      {
+        test: /\.txt$/,
+        use: 'raw-loader',
+      },
       {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file?name=static/[hash].[ext]',
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'static/[hash].[ext]',
+              esModule: false,
+            },
+          },
+        ],
       },
-      {test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css')},
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
     ],
   },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '_bundle.css',
+    }),
+  ],
 };

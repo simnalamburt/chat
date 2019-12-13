@@ -22,7 +22,7 @@ const UUID = require('uuid-js');
 const ReconnectingWebSocket = require('reconnectingwebsocket');
 const {Base64} = require('js-base64');
 
-const nickfile = require('./nicks.txt');
+const nickfile = require('./nicks.txt').default;
 
 require('normalize.css/normalize.css');
 require('font-awesome/css/font-awesome.css');
