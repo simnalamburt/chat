@@ -1,4 +1,7 @@
+# Client-side dependencies
 /client/node_modules
-
-/server/.bundle
+# Client-side build results
 /server/public/build
+
+# Server-side dependencies
+/server/.bundle/lib

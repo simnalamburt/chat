@@ -4,10 +4,11 @@ Simple web-based chat app.
 
 ![Sample Image](sample.png)
 ```bash
-# Building client-side codes
 cd client
 
+# Install client-side dependencies
 yarn
+# Build client-side codes
 yarn build
 yarn build:dev
 
@@ -15,16 +16,16 @@ yarn prettier
 yarn prettier:fix
 ```
 ```bash
-# Running server
 cd server
-bundle        # Install dependencies
 
-./run         # Start a server
-              # See http://localhost:4567
+# Install server-side dependencies
+bundle
 
+# Start a server, See http://localhost:4567
+bundle exec run
 
 # Start the server in production mode
-RACK_ENV=production ./run
+RACK_ENV=production bundle exec run
 ```
 
 --------
