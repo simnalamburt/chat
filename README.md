@@ -32,8 +32,13 @@ bundle exec run
 RACK_ENV=production bundle exec run
 ```
 
---------
+&nbsp;
 
-MIT License
+--------
+*chat* is primarily distributed under the terms of both the [Apache License
+(Version 2.0)] and the [MIT license]. See [COPYRIGHT] for details.
 
 [Sample Image]: https://raw.githubusercontent.com/simnalamburt/i/master/chat/sample.png
+[Apache License (Version 2.0)]: LICENSE-APACHE
+[MIT license]: LICENSE-MIT
+[COPYRIGHT]: COPYRIGHT
