@@ -4,7 +4,6 @@
 require 'sinatra'
 require 'sinatra-websocket'
 
-set :server, 'thin'
 set :sockets, []
 
 # Alias '/' to '/index.html'
