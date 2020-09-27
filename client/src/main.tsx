@@ -9,7 +9,7 @@ import { library, dom } from '@fortawesome/fontawesome-svg-core'
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons/faPencilAlt'
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 
-import nickfile from './nicks.txt'
+import nicks from './nicks.ts'
 
 import 'normalize.css'
 import './main.scss'
@@ -19,10 +19,7 @@ dom.watch()
 
 // Use random nickname
 // TODO: 바꿀 수 있도록 하기
-const mynick: string = (_ => {
-  const nicks = nickfile.split('\n').filter(n => n)
-  return nicks[Math.floor(Math.random() * nicks.length)]
-})()
+const mynick = nicks[Math.floor(Math.random() * nicks.length)]
 
 const myid: string = uuidv4()
 
