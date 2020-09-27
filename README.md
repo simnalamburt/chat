@@ -1,4 +1,4 @@
-Chat [![Build Status]][Travis CI]
+Chat
 ========
 Simple web-based chat app.
 
@@ -33,6 +33,4 @@ RACK_ENV=production bundle exec run
 
 MIT License
 
-[Build Status]: https://travis-ci.org/simnalamburt/chat.svg?branch=master
-[Travis CI]: https://travis-ci.org/simnalamburt/chat
 [Sample Image]: https://raw.githubusercontent.com/simnalamburt/i/master/chat/sample.png
