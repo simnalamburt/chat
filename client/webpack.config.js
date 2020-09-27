@@ -4,7 +4,6 @@ const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const CompressionPlugin = require('compression-webpack-plugin')
 
 //
 // Common configs
@@ -52,11 +51,6 @@ const prod = {
     new webpack.LoaderOptionsPlugin({ minimize: true, debug: false }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
-    }),
-    new CompressionPlugin({
-      test: /\.(?:css|js|svg|eot|ttf|html)$/,
-      minRatio: 1,
-      compressionOptions: { numiterations: 15 },
     }),
   ],
 }
