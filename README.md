@@ -2,7 +2,8 @@ Chat [![Build Status]][Travis CI]
 ========
 Simple web-based chat app.
 
-![Sample Image](sample.png)
+![Sample Image]
+
 ```bash
 cd client
 
@@ -34,3 +35,4 @@ MIT License
 
 [Build Status]: https://travis-ci.org/simnalamburt/chat.svg?branch=master
 [Travis CI]: https://travis-ci.org/simnalamburt/chat
+[Sample Image]: https://raw.githubusercontent.com/simnalamburt/i/master/chat/sample.png
