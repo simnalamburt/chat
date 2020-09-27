@@ -5,7 +5,6 @@ const webpack = require('webpack')
 const merge = require('webpack-merge')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
-const zopfli = require('@gfx/zopfli')
 
 //
 // Common configs
@@ -56,7 +55,6 @@ const prod = {
     }),
     new CompressionPlugin({
       test: /\.(?:css|js|svg|eot|ttf|html)$/,
-      algorithm: zopfli.gzip,
       minRatio: 1,
       compressionOptions: { numiterations: 15 },
     }),
