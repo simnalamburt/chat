@@ -11,10 +11,11 @@ cd client
 yarn
 # Build client-side codes
 yarn build
-yarn build:dev
 
-yarn prettier
-yarn prettier:fix
+# Typecheck + format check
+yarn test
+# Fix format
+yarn fmt
 ```
 ```bash
 cd server

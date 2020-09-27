@@ -1,9 +1,8 @@
 {
   "scripts": {
     "build": "webpack-cli --mode=production",
-    "build:dev": "webpack-cli --mode=development",
-    "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write ."
+    "test": "tsc --noEmit && prettier --check .",
+    "fmt": "prettier --write ."
   },
   "devDependencies": {
     "@types/js-base64": "^2.3.1",
