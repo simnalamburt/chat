@@ -49,10 +49,10 @@ type State = {
   current_channel: string
   editing?: string
 }
-const init: State = (_ => {
+const init: State = ((_) => {
   // Accept permalink
   const channels = ['general', 'random', 'notice']
-    .map(k => ({ [k]: new_channel() }))
+    .map((k) => ({ [k]: new_channel() }))
     .reduce((l, r) => Object.assign(l, r))
 
   let init = getBase64Hash()
@@ -198,7 +198,7 @@ class ChannelView extends React.Component<Props> {
     this.elem = React.createRef()
     this.elemEdit = React.createRef()
 
-    this.onSubmit = e => {
+    this.onSubmit = (e) => {
       e.preventDefault()
 
       const node = this.elemEdit.current
@@ -234,7 +234,7 @@ class ChannelView extends React.Component<Props> {
       lines.push(
         <li key={id}>
           <span className="nick">{usernick}</span>
-          {(_ =>
+          {((_) =>
             is_editing ? (
               <div className="content">{txt}</div>
             ) : (
@@ -243,18 +243,18 @@ class ChannelView extends React.Component<Props> {
                   value={txt}
                   ref={this.elemEdit}
                   onBlur={p.stopEdit}
-                  onChange={_ => p.updateMsg(ch, this.elemEdit.current!.value, id)}
+                  onChange={(_) => p.updateMsg(ch, this.elemEdit.current!.value, id)}
                 />
               </form>
             ))()}
-          {(_ =>
+          {((_) =>
             !is_editable ? null : (
               <span className="control">
-                <span onClick={_ => p.startEdit(id)}>
+                <span onClick={(_) => p.startEdit(id)}>
                   <i className="fas fa-pencil-alt" />
                 </span>
                 &nbsp;
-                <span onClick={_ => p.deleteMsg(ch, id)}>
+                <span onClick={(_) => p.deleteMsg(ch, id)}>
                   <i className="fas fa-trash" />
                 </span>
               </span>
@@ -301,11 +301,11 @@ const View = (props: Props) => {
           <input className="field" placeholder="새 채널" ref={field_channel} />
         </form>
         <ul>
-          {Object.keys(state.channels).map(ch => (
+          {Object.keys(state.channels).map((ch) => (
             <li
               id={ch === state.current_channel ? 'current' : undefined}
               key={ch}
-              onClick={_ => changeChannel(ch)}
+              onClick={(_) => changeChannel(ch)}
             >
               {ch}
             </li>
@@ -356,10 +356,10 @@ const mapDispatch = (dispatch: Dispatch): DispatchProps => ({
     sendAction(action)
     return dispatch(action)
   },
-  startEdit: msg_id => dispatch({ type: 'StartEdit', msg_id }),
+  startEdit: (msg_id) => dispatch({ type: 'StartEdit', msg_id }),
   stopEdit: () => dispatch({ type: 'StopEdit' }),
-  createChannel: channel => dispatch({ type: 'CreateChannel', channel }),
-  changeChannel: channel => dispatch({ type: 'ChangeChannel', channel }),
+  createChannel: (channel) => dispatch({ type: 'CreateChannel', channel }),
+  changeChannel: (channel) => dispatch({ type: 'ChangeChannel', channel }),
 })
 const App = connect(mapState, mapDispatch)(View)
 
@@ -368,7 +368,7 @@ const store = createStore(reducer)
 //
 // Communication
 //
-const socket = (_ => {
+const socket = ((_) => {
   const host = location.host
   const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
   return new ReconnectingWebSocket(`${protocol}//${host}/api`)
@@ -379,7 +379,7 @@ function sendAction(action: Action) {
   return socket.send(JSON.stringify(action))
 }
 
-socket.onmessage = event => {
+socket.onmessage = (event) => {
   // 서버로부터 전달받은 action 객체를 그대로 dispatch 한다
   store.dispatch(JSON.parse(event.data))
 }
