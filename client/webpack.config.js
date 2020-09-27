@@ -1,11 +1,7 @@
 'use strict'
-const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
-  output: {
-    path: path.resolve(__dirname, '../server/public'),
-  },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
