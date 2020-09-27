@@ -9,7 +9,7 @@ import { library, dom } from '@fortawesome/fontawesome-svg-core'
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons/faPencilAlt'
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 
-import nicks from './nicks.ts'
+import nicks from './nicks'
 
 import 'normalize.css'
 import './main.css'
