@@ -20,11 +20,6 @@ module.exports = {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
-      {
-        test: /\.scss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-        // 'sass' modules will be automatically injected to sass-loader
-      },
     ],
   },
   plugins: [
