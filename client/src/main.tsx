@@ -229,7 +229,8 @@ class ChannelView extends React.Component<Props> {
     const lines = []
     for (const [id, { userid, usernick, txt }] of channel) {
       const is_editable: boolean = userid.localeCompare(myid) === 0
-      const is_editing: boolean = editing == null || id.localeCompare(editing) !== 0
+      const is_editing: boolean =
+        editing == null || id.localeCompare(editing) !== 0
 
       lines.push(
         <li key={id}>
@@ -243,7 +244,9 @@ class ChannelView extends React.Component<Props> {
                   value={txt}
                   ref={this.elemEdit}
                   onBlur={p.stopEdit}
-                  onChange={(_) => p.updateMsg(ch, this.elemEdit.current!.value, id)}
+                  onChange={(_) =>
+                    p.updateMsg(ch, this.elemEdit.current!.value, id)
+                  }
                 />
               </form>
             ))()}
@@ -316,7 +319,11 @@ const View = (props: Props) => {
         <ChannelView {...props} />
         <form onSubmit={onSubmit}>
           <span>{mynick}</span>
-          <input className="field" placeholder="다른 동물 친구들과 이야기하세요!" ref={field} />
+          <input
+            className="field"
+            placeholder="다른 동물 친구들과 이야기하세요!"
+            ref={field}
+          />
         </form>
       </div>
     </div>
