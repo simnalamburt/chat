@@ -12,7 +12,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 import nicks from './nicks'
 
 import 'normalize.css'
-import './main.css'
+import './style.css'
 
 library.add(faPencilAlt, faTrash)
 dom.watch()
