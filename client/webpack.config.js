@@ -29,7 +29,7 @@ const commonConfigs = {
       {
         test: /\.scss$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-        // 'sass' and 'fibers' modules will be automatically injected to sass-loader
+        // 'sass' modules will be automatically injected to sass-loader
       },
     ],
   },
