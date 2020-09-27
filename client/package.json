@@ -1,6 +1,7 @@
 {
   "scripts": {
     "build": "webpack-cli --mode=production",
+    "dev": "webpack-cli --mode=development --watch",
     "test": "tsc --noEmit && prettier --check .",
     "fmt": "prettier --write ."
   },

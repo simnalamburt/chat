@@ -9,8 +9,10 @@ cd client
 
 # Install client-side dependencies
 yarn
-# Build client-side codes
+# Build frontend in production mode
 yarn build
+# Watch and build frontend in development mode
+yarn dev
 
 # Typecheck + format check
 yarn test
