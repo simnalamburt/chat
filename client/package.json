@@ -31,5 +31,9 @@
     "reconnectingwebsocket": "^1.0.0",
     "redux": "^4.0.4",
     "uuid": "^8"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
   }
 }
