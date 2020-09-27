@@ -25,10 +25,6 @@ const commonConfigs = {
         exclude: /node_modules/,
       },
       {
-        test: /\.txt$/,
-        use: 'raw-loader',
-      },
-      {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
