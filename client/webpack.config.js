@@ -7,7 +7,6 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../server/public/build'),
     publicPath: '/build/',
-    filename: '_bundle.js',
   },
   module: {
     rules: [
@@ -22,9 +21,5 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: '_bundle.css',
-    }),
-  ],
+  plugins: [new MiniCssExtractPlugin()],
 }
