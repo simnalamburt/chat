@@ -1,6 +1,5 @@
 # Frontend build results
-/public/main.css
-/public/main.js
+/public/main.*
 
 # Dependencies
 /.bundle/lib/
