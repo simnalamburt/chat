@@ -1,14 +1,8 @@
 'use strict'
-
 const path = require('path')
-const webpack = require('webpack')
-const merge = require('webpack-merge')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-//
-// Common configs
-//
-const commonConfigs = {
+module.exports = {
   entry: './src/main.tsx',
   output: {
     path: path.resolve(__dirname, '../server/public/build'),
@@ -39,20 +33,3 @@ const commonConfigs = {
     }),
   ],
 }
-
-// Development-mode configs
-const dev = {
-  devtool: 'inline-source-map',
-}
-
-// Production-mode configs
-const prod = {
-  plugins: [
-    new webpack.LoaderOptionsPlugin({ minimize: true, debug: false }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production'),
-    }),
-  ],
-}
-
-module.exports = (_, { mode }) => merge(commonConfigs, mode === 'production' ? prod : dev)
