@@ -12,7 +12,7 @@
     "@types/react-redux": "^7.1.5",
     "@types/reconnectingwebsocket": "^1.0.3",
     "@types/uuid": "^8",
-    "css-loader": "^4.3.0",
+    "css-loader": "^5",
     "mini-css-extract-plugin": "^0.11.2",
     "prettier": "^2",
     "ts-loader": "^8.0.4",
