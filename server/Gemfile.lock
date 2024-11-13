@@ -3,22 +3,24 @@ GEM
   specs:
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
+    base64 (0.2.0)
     daemons (1.4.1)
     em-websocket (0.3.8)
       addressable (>= 2.1.1)
       eventmachine (>= 0.12.9)
     eventmachine (1.2.7)
-    mustermann (2.0.2)
+    mustermann (3.0.3)
       ruby2_keywords (~> 0.0.1)
     public_suffix (6.0.1)
     rack (2.2.10)
-    rack-protection (2.2.4)
-      rack
+    rack-protection (3.2.0)
+      base64 (>= 0.1.0)
+      rack (~> 2.2, >= 2.2.4)
     ruby2_keywords (0.0.5)
-    sinatra (2.2.4)
-      mustermann (~> 2.0)
-      rack (~> 2.2)
-      rack-protection (= 2.2.4)
+    sinatra (3.2.0)
+      mustermann (~> 3.0)
+      rack (~> 2.2, >= 2.2.4)
+      rack-protection (= 3.2.0)
       tilt (~> 2.0)
     sinatra-websocket (0.3.1)
       em-websocket (~> 0.3.6)
@@ -35,7 +37,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  sinatra (>= 2.1.0, < 3)
+  base64 (~> 0.2.0)
+  sinatra (>= 3.0.0, < 4)
   sinatra-websocket (~> 0.3.1)
 
 BUNDLED WITH
