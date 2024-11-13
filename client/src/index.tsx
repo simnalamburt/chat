@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { createStore } from 'redux'
 import { Provider, connect } from 'react-redux'
 import { v4 as uuidv4 } from 'uuid'
@@ -399,9 +399,8 @@ store.subscribe(() => {
   setBase64Hash(store.getState().current_channel)
 })
 
-render(
+createRoot(document.getElementById('target')!).render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById('target'),
 )
