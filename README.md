@@ -8,16 +8,16 @@ Simple web-based chat app.
 cd client
 
 # Install client-side dependencies
-yarn
+pnpm install
 # Build frontend in production mode
-yarn build
+pnpm build
 # Watch and build frontend in development mode
-yarn dev
+pnpm dev
 
 # Typecheck + format check
-yarn test
+pnpm test
 # Fix format
-yarn fmt
+pnpm fmt
 ```
 ```bash
 cd server
