@@ -262,7 +262,7 @@ class ChannelView extends React.Component<Props> {
                 </span>
               </span>
             ))()}
-        </li>
+        </li>,
       )
     }
     return <ul ref={this.elem}>{lines}</ul>
@@ -403,5 +403,5 @@ render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById('target')
+  document.getElementById('target'),
 )
