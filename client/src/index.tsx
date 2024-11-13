@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createStore } from 'redux'
 import { Provider, connect } from 'react-redux'
@@ -186,87 +186,63 @@ type Props = {
   createChannel: (channel: string) => Action
   changeChannel: (channel: string) => Action
 }
+const ChannelView = (props: Props) => {
+  const { state, updateMsg, deleteMsg, startEdit, stopEdit } = props
+  const { current_channel: ch, editing } = state
+  const channel = state.channels[ch]
 
-class ChannelView extends React.Component<Props> {
-  elem: React.RefObject<HTMLUListElement>
-  elemEdit: React.RefObject<HTMLInputElement>
-  onSubmit: (e: React.FormEvent) => void
+  const elem = useRef<HTMLUListElement>(null)
+  const elemEdit = useRef<HTMLInputElement>(null)
 
-  constructor(props: Props) {
-    super(props)
-
-    this.elem = React.createRef()
-    this.elemEdit = React.createRef()
-
-    this.onSubmit = (e) => {
-      e.preventDefault()
-
-      const node = this.elemEdit.current
-      if (node != null) {
-        node.blur()
-      }
-    }
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    elemEdit.current?.blur()
   }
 
-  componentDidUpdate() {
-    const node = this.elem.current
-    if (node != null) {
+  useEffect(() => {
+    if (elem.current != null) {
       // TODO: 남이 메세지를 보냈을때도 스크롤이 확확 올라가버리면 곤란함
-      node.scrollTop = node.scrollHeight - node.clientHeight
+      elem.current.scrollTop =
+        elem.current.scrollHeight - elem.current.clientHeight
     }
+    elemEdit.current?.focus()
+  })
 
-    const nodeEdit = this.elemEdit.current
-    if (nodeEdit != null) {
-      nodeEdit.focus()
-    }
-  }
+  const lines = Array.from(channel).map(([id, { userid, usernick, txt }]) => {
+    const is_editable = userid.localeCompare(myid) === 0
+    const is_editing = editing == null || id.localeCompare(editing) !== 0
 
-  render() {
-    const p: Props = this.props
-    const { current_channel: ch, editing } = p.state
-    const channel = p.state.channels[ch]
+    return (
+      <li key={id}>
+        <span className="nick">{usernick}</span>
+        {is_editing ? (
+          <div className="content">{txt}</div>
+        ) : (
+          <form className="content" onSubmit={onSubmit}>
+            <input
+              value={txt}
+              ref={elemEdit}
+              onBlur={stopEdit}
+              onChange={() => updateMsg(ch, elemEdit.current!.value, id)}
+            />
+          </form>
+        )}
+        {is_editable && (
+          <span className="control">
+            <span onClick={() => startEdit(id)}>
+              <i className="fas fa-pencil-alt" />
+            </span>
+            &nbsp;
+            <span onClick={() => deleteMsg(ch, id)}>
+              <i className="fas fa-trash" />
+            </span>
+          </span>
+        )}
+      </li>
+    )
+  })
 
-    const lines = []
-    for (const [id, { userid, usernick, txt }] of channel) {
-      const is_editable: boolean = userid.localeCompare(myid) === 0
-      const is_editing: boolean =
-        editing == null || id.localeCompare(editing) !== 0
-
-      lines.push(
-        <li key={id}>
-          <span className="nick">{usernick}</span>
-          {((_) =>
-            is_editing ? (
-              <div className="content">{txt}</div>
-            ) : (
-              <form className="content" onSubmit={this.onSubmit}>
-                <input
-                  value={txt}
-                  ref={this.elemEdit}
-                  onBlur={p.stopEdit}
-                  onChange={(_) =>
-                    p.updateMsg(ch, this.elemEdit.current!.value, id)
-                  }
-                />
-              </form>
-            ))()}
-          {((_) =>
-            !is_editable ? null : (
-              <span className="control">
-                <span onClick={(_) => p.startEdit(id)}>
-                  <i className="fas fa-pencil-alt" />
-                </span>
-                &nbsp;
-                <span onClick={(_) => p.deleteMsg(ch, id)}>
-                  <i className="fas fa-trash" />
-                </span>
-              </span>
-            ))()}
-        </li>,
-      )
-    }
-    return <ul ref={this.elem}>{lines}</ul>
-  }
+  return <ul ref={elem}>{lines}</ul>
 }
 
 const View = (props: Props) => {
