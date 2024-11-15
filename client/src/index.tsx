@@ -21,7 +21,7 @@ dom.watch()
 // TODO: 바꿀 수 있도록 하기
 const mynick = nicks[Math.floor(Math.random() * nicks.length)]
 
-const myid: string = uuidv4()
+const myid: string = crypto.randomUUID()
 
 //
 // Permalink
