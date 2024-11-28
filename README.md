@@ -23,13 +23,10 @@ pnpm fmt
 cd server
 
 # Install server-side dependencies
-bundle
+bun install
 
 # Start a server, See http://localhost:4567
-bundle exec run
-
-# Start the server in production mode
-RACK_ENV=production bundle exec run
+bun dev
 ```
 
 &nbsp;
