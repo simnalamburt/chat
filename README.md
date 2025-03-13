@@ -16,8 +16,8 @@ pnpm dev
 
 # Typecheck + format check
 pnpm test
-# Fix format
-pnpm fmt
+# Fix formatting and auto-fixable linting errors
+pnpm fix
 ```
 ```bash
 cd server
