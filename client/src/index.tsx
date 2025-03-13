@@ -375,8 +375,11 @@ store.subscribe(() => {
   setBase64Hash(store.getState().current_channel)
 })
 
-createRoot(document.getElementById('target')!).render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-)
+const target = document.getElementById('root')
+if (target != null) {
+  createRoot(target).render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+  )
+}
