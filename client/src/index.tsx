@@ -1,13 +1,14 @@
 import React, { useRef, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createStore } from 'redux'
 import { Provider, connect } from 'react-redux'
-import { v4 as uuidv4 } from 'uuid'
-import ReconnectingWebSocket from 'reconnectingwebsocket'
-import { Base64 } from 'js-base64'
-import { library, dom } from '@fortawesome/fontawesome-svg-core'
+import { createStore } from 'redux'
+
+import { dom, library } from '@fortawesome/fontawesome-svg-core'
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons/faPencilAlt'
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
+import { Base64 } from 'js-base64'
+import ReconnectingWebSocket from 'reconnectingwebsocket'
+import { v4 as uuidv4 } from 'uuid'
 
 import nicks from './nicks'
 
@@ -57,7 +58,8 @@ const init: State = ((_) => {
 
   let init = getBase64Hash()
   if (!init) {
-    setBase64Hash((init = 'general'))
+    init = 'general'
+    setBase64Hash(init)
   } // Default channel
   if (!(init in channels)) {
     channels[init] = new_channel()
@@ -83,6 +85,7 @@ type Action = {
 }
 type Dispatch = (action: Action) => Action
 
+// biome-ignore lint/style/useDefaultParameterLast: This is normal in Redux
 const reducer = (state: State = init, action: Action): State => {
   const { channel: ch, msg, msg_id, msg_txt } = action
   switch (action.type) {
@@ -108,17 +111,19 @@ const reducer = (state: State = init, action: Action): State => {
         return state
       }
 
+      const next = Object.assign({}, state)
+
       // 내가 모르는 채널의 메세지 수정일경우, 무시
-      if (!(ch in state.channels)) {
+      if (!(ch in next.channels)) {
         return state
       }
       // 내가 받은적 없는 메세지의 수정일경우, 무시
-      if (state.channels[ch].get(msg_id) == null) {
+      const msg = next.channels[ch].get(msg_id)
+      if (msg == null) {
         return state
       }
 
-      const next = Object.assign({}, state)
-      next.channels[ch].get(msg_id)!.txt = msg_txt
+      msg.txt = msg_txt
       return next
     }
     case 'DeleteMsg': {
@@ -223,16 +228,21 @@ const ChannelView = (props: Props) => {
               value={txt}
               ref={elemEdit}
               onBlur={stopEdit}
-              onChange={() => updateMsg(ch, elemEdit.current!.value, id)}
+              onChange={() =>
+                elemEdit.current != null &&
+                updateMsg(ch, elemEdit.current.value, id)
+              }
             />
           </form>
         )}
         {is_editable && (
           <span className="control">
+            {/* biome-ignore lint/a11y/useKeyWithClickEvents: TODO: Ensure accessibility by making it usable without a mouse. */}
             <span onClick={() => startEdit(id)}>
               <i className="fas fa-pencil-alt" />
             </span>
             &nbsp;
+            {/* biome-ignore lint/a11y/useKeyWithClickEvents: TODO: Ensure accessibility by making it usable without a mouse. */}
             <span onClick={() => deleteMsg(ch, id)}>
               <i className="fas fa-trash" />
             </span>
@@ -248,8 +258,8 @@ const ChannelView = (props: Props) => {
 const View = (props: Props) => {
   const { state, createMsg, createChannel, changeChannel } = props
 
-  let field = React.createRef<HTMLInputElement>()
-  let field_channel = React.createRef<HTMLInputElement>()
+  const field = React.createRef<HTMLInputElement>()
+  const field_channel = React.createRef<HTMLInputElement>()
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -267,7 +277,7 @@ const View = (props: Props) => {
       return
     }
 
-    let ch = field_channel.current.value
+    const ch = field_channel.current.value
     field_channel.current.value = ''
     createChannel(ch)
     changeChannel(ch)
@@ -281,6 +291,7 @@ const View = (props: Props) => {
         </form>
         <ul>
           {Object.keys(state.channels).map((ch) => (
+            // biome-ignore lint/a11y/useKeyWithClickEvents: TODO: Ensure accessibility by making it usable without a mouse.
             <li
               id={ch === state.current_channel ? 'current' : undefined}
               key={ch}
