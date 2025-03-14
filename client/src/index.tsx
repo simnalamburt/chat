@@ -20,9 +20,9 @@ dom.watch()
 
 // Use random nickname
 // TODO: 바꿀 수 있도록 하기
-const mynick = nicks[Math.floor(Math.random() * nicks.length)]
+const mynick = nicks[Math.floor(Math.random() * nicks.length)] as string
 
-const myid: string = crypto.randomUUID()
+const myid = crypto.randomUUID()
 
 //
 // Permalink
@@ -98,11 +98,13 @@ const reducer = (state: State = init, action: Action): State => {
       const next = Object.assign({}, state)
 
       // 내가 모르는 채널에서 메세지가 올 경우, 그 채널을 추가
-      if (!(ch in next.channels)) {
-        next.channels[ch] = new_channel()
+      let channel = next.channels[ch]
+      if (channel == null) {
+        channel = new_channel()
+        next.channels[ch] = channel
       }
 
-      next.channels[ch].set(msg_id, msg)
+      channel.set(msg_id, msg)
       return next
     }
     case 'UpdateMsg': {
@@ -113,17 +115,13 @@ const reducer = (state: State = init, action: Action): State => {
 
       const next = Object.assign({}, state)
 
-      // 내가 모르는 채널의 메세지 수정일경우, 무시
-      if (!(ch in next.channels)) {
-        return state
-      }
-      // 내가 받은적 없는 메세지의 수정일경우, 무시
-      const msg = next.channels[ch].get(msg_id)
-      if (msg == null) {
+      // 모르는 채널 혹은 받은적 없는 메세지의 수정일경우, 무시
+      const message = next.channels[ch]?.get(msg_id)
+      if (message == null) {
         return state
       }
 
-      msg.txt = msg_txt
+      message.txt = msg_txt
       return next
     }
     case 'DeleteMsg': {
@@ -132,13 +130,15 @@ const reducer = (state: State = init, action: Action): State => {
         return state
       }
 
+      const next = Object.assign({}, state)
+
       // 내가 모르는 채널의 메세지 삭제일경우, 무시
-      if (!(ch in state.channels)) {
+      const channel = next.channels[ch]
+      if (channel == null) {
         return state
       }
 
-      const next = Object.assign({}, state)
-      next.channels[ch].delete(msg_id)
+      channel.delete(msg_id)
       return next
     }
     case 'StartEdit': {
@@ -194,7 +194,7 @@ type Props = {
 const ChannelView = (props: Props) => {
   const { state, updateMsg, deleteMsg, startEdit, stopEdit } = props
   const { current_channel: ch, editing } = state
-  const channel = state.channels[ch]
+  const channel = state.channels[ch] as Channel
 
   const elem = useRef<HTMLUListElement>(null)
   const elemEdit = useRef<HTMLInputElement>(null)
