@@ -2,7 +2,7 @@
   "scripts": {
     "build": "rsbuild build",
     "dev": "rsbuild dev",
-    "test": "tsc --noEmit && biome check",
+    "test": "tsc && biome check",
     "fix": "biome check --fix"
   },
   "devDependencies": {
