@@ -1,27 +1,7 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "preserve",
     "lib": ["esnext", "dom"],
-    "noEmit": true,
-    "skipLibCheck": true,
-
-    // Strict Typecheck
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-
-    // Module
-    "esModuleInterop": true,
-    "moduleResolution": "bundler",
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-
-    // JSX
     "jsx": "react-jsx"
   },
   "exclude": ["dist"]

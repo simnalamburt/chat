@@ -48,7 +48,7 @@ const new_channel = (): Channel => new Map()
 type State = {
   channels: { [name: string]: Channel }
   current_channel: string
-  editing?: string
+  editing: string | undefined
 }
 const init: State = ((_) => {
   // Accept permalink

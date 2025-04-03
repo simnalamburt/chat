@@ -1,5 +1,5 @@
-import { defineConfig } from '@rsbuild/core'
+import { type RsbuildConfig, defineConfig } from '@rsbuild/core'
 
-export default defineConfig({
-  plugins: [],
-})
+const config: RsbuildConfig = defineConfig({})
+
+export default config
