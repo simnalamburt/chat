@@ -4,7 +4,12 @@ import { Elysia } from 'elysia'
 const sockets = new Map()
 
 const app = new Elysia()
-  .use(staticPlugin({ prefix: '/' }))
+  .use(
+    staticPlugin({
+      assets: `${import.meta.dirname}/../client/dist`,
+      prefix: '/',
+    }),
+  )
   .ws('/api', {
     open(ws) {
       sockets.set(ws.id, ws)

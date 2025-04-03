@@ -17,9 +17,7 @@ bun run build   # Build frontend in production mode
 bun dev         # Watch and build frontend in development mode
 ```
 ```bash
-cd server
-
-bun .           # Start a server, See http://localhost:4567
+bun server      # Start a server, See http://localhost:4567
 ```
 
 &nbsp;
