@@ -2,7 +2,7 @@
   "packageManager": "bun@1.2.8",
   "workspaces": ["client", "server"],
   "scripts": {
-    "test": "biome check",
+    "test": "biome check && bun run -F '*' test",
     "fix": "biome check --fix"
   },
   "devDependencies": {

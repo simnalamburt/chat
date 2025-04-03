@@ -7,27 +7,19 @@ Simple web-based chat app.
 ```bash
 bun i
 
-# Format check
-bun run test
-# Fix formatting and auto-fixable linting errors
-bun fix
+bun run test    # Format check and typecheck
+bun fix         # Fix formatting and auto-fixable linting errors
 ```
 ```bash
 cd client
 
-# Build frontend in production mode
-bun run build
-# Watch and build frontend in development mode
-bun dev
-
-# Typecheck
-bun run test
+bun run build   # Build frontend in production mode
+bun dev         # Watch and build frontend in development mode
 ```
 ```bash
 cd server
 
-# Start a server, See http://localhost:4567
-bun .
+bun .           # Start a server, See http://localhost:4567
 ```
 
 &nbsp;
