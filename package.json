@@ -1,4 +1,11 @@
 {
+  "packageManager": "bun@1.2.8",
   "workspaces": ["client", "server"],
-  "packageManager": "bun@1.2.8"
+  "scripts": {
+    "test": "biome check",
+    "fix": "biome check --fix"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
+  }
 }

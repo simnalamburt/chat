@@ -1,27 +1,27 @@
-import { Elysia } from "elysia";
-import { staticPlugin } from "@elysiajs/static";
+import { staticPlugin } from '@elysiajs/static'
+import { Elysia } from 'elysia'
 
-const sockets = new Map;
+const sockets = new Map()
 
 const app = new Elysia()
-  .use(staticPlugin({ prefix: "/" }))
-  .ws("/api", {
+  .use(staticPlugin({ prefix: '/' }))
+  .ws('/api', {
     open(ws) {
-      sockets.set(ws.id, ws);
+      sockets.set(ws.id, ws)
     },
     close(ws) {
-      sockets.delete(ws.id);
+      sockets.delete(ws.id)
     },
     message(ws, message) {
       for (const [id, socket] of sockets) {
-        if (ws.id === id) continue;
+        if (ws.id === id) continue
 
-        socket.send(message);
+        socket.send(message)
       }
     },
   })
-  .listen(4567);
+  .listen(4567)
 
 console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
+  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
+)

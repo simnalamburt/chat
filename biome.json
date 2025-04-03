@@ -1,6 +1,6 @@
 {
   "files": {
-    "ignore": ["dist"]
+    "ignore": ["dist", "*.json"]
   },
   "formatter": {
     "indentStyle": "space"

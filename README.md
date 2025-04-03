@@ -6,6 +6,11 @@ Simple web-based chat app.
 
 ```bash
 bun i
+
+# Format check
+bun run test
+# Fix formatting and auto-fixable linting errors
+bun fix
 ```
 ```bash
 cd client
@@ -15,10 +20,8 @@ bun run build
 # Watch and build frontend in development mode
 bun dev
 
-# Typecheck + format check
+# Typecheck
 bun run test
-# Fix formatting and auto-fixable linting errors
-bun fix
 ```
 ```bash
 cd server
