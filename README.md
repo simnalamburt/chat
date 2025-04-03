@@ -5,10 +5,11 @@ Simple web-based chat app.
 ![Sample Image]
 
 ```bash
+bun i
+```
+```bash
 cd client
 
-# Install client-side dependencies
-bun install
 # Build frontend in production mode
 bun run build
 # Watch and build frontend in development mode
@@ -22,11 +23,8 @@ bun fix
 ```bash
 cd server
 
-# Install server-side dependencies
-bun install
-
 # Start a server, See http://localhost:4567
-bun dev
+bun .
 ```
 
 &nbsp;

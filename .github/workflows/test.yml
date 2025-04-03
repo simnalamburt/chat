@@ -1,17 +1,13 @@
 on: [push, pull_request]
 
-defaults:
-  run:
-    working-directory: client
-
 jobs:
   test:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: client/package.json
       - run: bun install
-      - run: bun run build
-      - run: bun run test
+      - run: |
+          cd client
+          bun run build
+          bun run test
