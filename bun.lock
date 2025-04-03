@@ -36,6 +36,9 @@
         "@elysiajs/static": "^1.2.0",
         "elysia": "^1.2.25",
       },
+      "devDependencies": {
+        "typescript": "^5.8.2",
+      },
     },
   },
   "packages": {
