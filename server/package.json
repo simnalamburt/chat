@@ -4,5 +4,5 @@
     "@elysiajs/static": "^1.2.0",
     "elysia": "^1.2.25"
   },
-  "module": "src/index.js"
+  "module": "index.ts"
 }
