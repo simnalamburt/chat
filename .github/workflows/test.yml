@@ -9,15 +9,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          run_install.cwd: client
-          package_json_file: 'client/package.json'
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-          cache-dependency-path: client/pnpm-lock.yaml
-      - run: pnpm install
-      - run: pnpm build
-      - run: pnpm test
+          bun-version-file: client/package.json
+      - run: bun install
+      - run: bun run build
+      - run: bun run test

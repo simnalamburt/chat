@@ -8,16 +8,16 @@ Simple web-based chat app.
 cd client
 
 # Install client-side dependencies
-pnpm install
+bun install
 # Build frontend in production mode
-pnpm build
+bun run build
 # Watch and build frontend in development mode
-pnpm dev
+bun dev
 
 # Typecheck + format check
-pnpm test
+bun run test
 # Fix formatting and auto-fixable linting errors
-pnpm fix
+bun fix
 ```
 ```bash
 cd server

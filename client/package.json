@@ -27,5 +27,5 @@
     "redux": "^5.0.1",
     "uuid": "^11.1.0"
   },
-  "packageManager": "pnpm@10.6.2"
+  "packageManager": "bun@1.2.8"
 }
