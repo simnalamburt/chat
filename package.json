@@ -1,5 +1,5 @@
 {
-  "packageManager": "bun@1.2.8",
+  "packageManager": "bun@1.2.22",
   "workspaces": ["client", "server"],
   "scripts": {
     "test": "biome check && bun run -F '*' test",
